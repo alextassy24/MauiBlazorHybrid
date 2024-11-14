@@ -24,3 +24,7 @@ AppPackages/
 *.apk
 *.aab
 *.ipa
+
+.vscode/
+
+.gitignore
