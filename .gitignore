@@ -1,0 +1,26 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs and databases
+*.log
+*.ldb
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# Build and release directories
+bin/
+obj/
+AppPackages/
+*.app/
+*.apk
+*.aab
+*.ipa
