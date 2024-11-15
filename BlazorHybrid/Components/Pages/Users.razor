@@ -1,0 +1,42 @@
+@page "/users"
+@inject BlazorHybrid.ViewModels.UsersViewModel UsersViewModel
+
+@{
+    string btnPrimary="px-2 py-2 rounded-lg shadow text-white font-bold bg-purple-700";
+}
+
+<div class="container p-5 mt-10">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-start">Your Clients</h1>
+        <div class="flex justify-end">
+            <button class="flex items-center gap-2 @btnPrimary p-4" @onclick="UsersViewModel.AddUser">
+                <i class="fa-solid fa-plus"></i>
+                <span class="hidden md:inline-block"> Add User</span>
+            </button>
+        </div>
+    </div>
+    
+    @if (UsersViewModel.Users?.Any() == true)
+    {
+        <ul class="mt-4 space-y-4">
+            @{
+                int count = 1;
+            }
+            @foreach (var user in UsersViewModel.Users)
+            {
+                <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-300 hover:cursor-pointer border-b-indigo-500">
+                    <div class="flex flex-col items-start" @onclick="() => UsersViewModel.GoToUserPage(user.Id)">
+                        <span class="font-bold">@count. @user.FirstName @user.LastName</span>
+                        <span class="text-gray-600">@user.Email</span>
+                    </div>
+                </li>
+                count++;
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="p-3 font-bold text-center text-red-300 bg-red-600 rounded-lg shadow">No users found.</p>
+    }
+
+</div>

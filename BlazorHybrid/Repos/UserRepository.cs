@@ -10,8 +10,8 @@ namespace BlazorHybrid.Repos
         {
             _users =
             [
-                new User { FirstName = "John", LastName = "Doe"},
-                new User { FirstName = "Jane", LastName = "Doe"},
+                new User { FirstName = "Ana", LastName = "Banana"},
+                new User { FirstName = "Tanță", LastName = "Prestanță"},
                 new User { FirstName = "Tanase", LastName = "Alexandru"},
                 new User { FirstName = "Gruia", LastName = "Cristian"},
                 new User { FirstName = "Sirbu", LastName = "Gabriel"},

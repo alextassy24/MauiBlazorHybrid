@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorHybrid.ViewModels
 {
-    public class UserViewModel(IUserRepository userRepository, NavigationManager navigationManager)
+    public class EditUserViewModel(IUserRepository userRepository, NavigationManager navigationManager)
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly NavigationManager _navigationManager = navigationManager;
@@ -15,17 +15,6 @@ namespace BlazorHybrid.ViewModels
         public void LoadUser(Guid id)
         {
             SelectedUser = _userRepository.GetById(id);
-        }
-
-        public void RemoveUser(Guid userId)
-        {
-            _userRepository.Delete(userId);
-
-            var userToRemove = Users.FirstOrDefault(u => u.Id == userId);
-            if (userToRemove != null)
-            {
-                Users.Remove(userToRemove);
-            }
         }
 
         public void NavigateToEdit(Guid id)

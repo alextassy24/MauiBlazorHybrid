@@ -5,16 +5,41 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorHybrid.ViewModels
 {
-    public class UserViewModel(IUserRepository userRepository, NavigationManager navigationManager)
+    public class UsersViewModel
     {
-        private readonly IUserRepository _userRepository = userRepository;
-        private readonly NavigationManager _navigationManager = navigationManager;
+        private readonly IUserRepository _userRepository;
+        private readonly NavigationManager _navigationManager;
         public User? SelectedUser { get; private set; }
         public ObservableCollection<User> Users { get; private set; } = [];
+
+        public UsersViewModel(IUserRepository userRepository, NavigationManager navigationManager)
+        {
+            _userRepository = userRepository;
+            _navigationManager = navigationManager;
+            LoadUsers();
+        }
+
+        private void LoadUsers()
+        {
+            var users = _userRepository.GetAll();
+            Users = [.. users];
+        }
 
         public void LoadUser(Guid id)
         {
             SelectedUser = _userRepository.GetById(id);
+        }
+
+        public void AddUser()
+        {
+            Users.Add(
+                new User
+                {
+                    FirstName = "New",
+                    LastName = "User",
+                    Email = "newuser@example.com",
+                }
+            );
         }
 
         public void RemoveUser(Guid userId)
@@ -26,6 +51,11 @@ namespace BlazorHybrid.ViewModels
             {
                 Users.Remove(userToRemove);
             }
+        }
+
+        public void GoToUserPage(Guid id)
+        {
+            _navigationManager.NavigateTo($"/user/{id}");
         }
 
         public void NavigateToEdit(Guid id)

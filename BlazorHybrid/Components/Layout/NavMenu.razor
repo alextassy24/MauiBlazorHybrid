@@ -8,9 +8,18 @@
         </a>
 
         <!-- Mobile Menu Toggle -->
-        <button @onclick="ToggleMenu" class="block cursor-pointer lg:hidden focus:outline-none">
-            <i class="text-2xl fas fa-bars"></i>
-        </button>
+        @if (!isMenuOpen)
+        {
+            <button @onclick="ToggleMenu" class="block cursor-pointer lg:hidden focus:outline-none">
+                <i class="text-2xl fas fa-bars"></i>
+            </button>
+        }
+        else
+        {
+            <button @onclick="ToggleMenu" class="block cursor-pointer lg:hidden focus:outline-none">
+                <i class="text-2xl fa-solid fa-x"></i>
+            </button>
+        }
 
         <!-- Navigation Links (hidden on mobile) -->
         <nav class="hidden gap-6 lg:flex">
@@ -72,7 +81,6 @@
 
     private string GetCurrentRoute()
     {
-        // Use the Uri property of NavigationManager to get the current route.
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
     }
 
