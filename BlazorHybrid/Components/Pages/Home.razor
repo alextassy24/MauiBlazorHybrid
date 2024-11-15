@@ -1,5 +1,82 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<div class="flex flex-col items-center justify-center w-full min-h-screen p-5 text-white bg-gradient-to-b from-purple-600 to-indigo-800">
+    <!-- Header -->
+    <header class="mt-10 text-center">
+        <h1 class="text-4xl font-extrabold">Welcome to Fitness Tracker</h1>
+        <p class="mt-4 text-lg font-medium">Your personal journey to a healthier, fitter you starts here!</p>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="w-full max-w-lg p-8 mt-10 text-gray-800 bg-white rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold text-center text-indigo-600">Let's Get Started</h2>
+        
+        <div class="mt-6 space-y-4">
+            <p class="text-center text-gray-700">Track your workouts, plan meals, monitor progress, and stay motivated every step of the way.</p>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-4">
+                <button class="flex items-center justify-center w-full gap-2 px-4 py-3 font-semibold text-white transition bg-purple-500 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-opacity-50">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span>View Workouts</span>
+                </button>
+                
+                <button class="flex items-center justify-center w-full gap-2 px-4 py-3 font-semibold text-white transition bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50">
+                    <i class="fa-solid fa-utensils"></i>
+                    <span>Plan Meals</span>
+                </button>
+                
+                <button class="flex items-center justify-center w-full gap-2 px-4 py-3 font-semibold text-white transition bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-opacity-50">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Track Progress</span>
+                </button>
+                
+                <button class="flex items-center justify-center w-full gap-2 px-4 py-3 font-semibold text-white transition bg-gray-700 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+                    <i class="fa-solid fa-user"></i>
+                    <span>My Profile</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <section class="w-full max-w-4xl mt-16 text-center">
+        <h3 class="text-2xl font-semibold text-indigo-300">Why Choose Fitness Tracker?</h3>
+        <p class="mt-4 text-lg text-gray-100">
+            Fitness Tracker offers everything you need to reach your fitness goals. With features designed to help you manage workouts, nutrition, and progress,
+            you’ll have all the tools to stay on track and motivated.
+        </p>
+        
+        <div class="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="p-5 bg-purple-500 rounded-lg shadow-lg">
+                <i class="text-3xl fa-solid fa-heartbeat"></i>
+                <h4 class="mt-4 text-xl font-semibold">Health Monitoring</h4>
+                <p class="mt-2 text-gray-100">Keep track of your vital signs, set goals, and stay on top of your health metrics.</p>
+            </div>
+            <div class="p-5 bg-blue-500 rounded-lg shadow-lg">
+                <i class="text-3xl fa-solid fa-apple-alt"></i>
+                <h4 class="mt-4 text-xl font-semibold">Personalized Meal Plans</h4>
+                <p class="mt-2 text-gray-100">Create custom meal plans that fit your dietary needs and preferences.</p>
+            </div>
+            <div class="p-5 bg-green-500 rounded-lg shadow-lg">
+                <i class="text-3xl fa-solid fa-trophy"></i>
+                <h4 class="mt-4 text-xl font-semibold">Progress Tracking</h4>
+                <p class="mt-2 text-gray-100">Monitor your improvements, stay motivated, and celebrate your achievements.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="w-full mt-10 text-center text-gray-300">
+        <p>&copy; @DateTime.Now.Year Fitness Tracker. All rights reserved.</p>
+    </footer>
+</div>
 
-Welcome to your new app.
+<style>
+   html, body {
+       margin: 0;
+       padding: 0;
+       width: 100%;
+       overflow-x: hidden;
+   }
+</style>

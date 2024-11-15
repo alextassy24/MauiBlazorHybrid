@@ -1,27 +1,85 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorHybrid</a>
+﻿@inject NavigationManager NavigationManager
+
+<div class="fixed z-10 w-full text-white bg-purple-700 shadow">
+    <div class="flex items-center justify-between px-4 py-3">
+        <!-- Logo and Title -->
+        <a href="/" class="flex items-center text-2xl font-semibold text-white hover:text-purple-200">
+            <i class="mr-2 fas fa-dumbbell"></i> Fitness Tracker
+        </a>
+
+        <!-- Mobile Menu Toggle -->
+        <button @onclick="ToggleMenu" class="block cursor-pointer lg:hidden focus:outline-none">
+            <i class="text-2xl fas fa-bars"></i>
+        </button>
+
+        <!-- Navigation Links (hidden on mobile) -->
+        <nav class="hidden gap-6 lg:flex">
+            <NavLink href="/" class="@GetNavLinkClass("/" == GetCurrentRoute())" @onclick="CloseMenu"
+                Match="NavLinkMatch.All">
+                <span class="fa fa-home"></span>
+                <span>Home</span>
+            </NavLink>
+            <NavLink href="users" class="@GetNavLinkClass("users" == GetCurrentRoute())" @onclick="CloseMenu"
+                Match="NavLinkMatch.Prefix">
+                <span class="fa-solid fa-users"></span>
+                <span>Clients</span>
+            </NavLink>
+            <NavLink href="workouts" class="@GetNavLinkClass("workouts" == GetCurrentRoute())" @onclick="CloseMenu"
+                Match="NavLinkMatch.Prefix">
+                <span class="fas fa-dumbbell"></span>
+                <span>Workouts</span>
+            </NavLink>
+        </nav>
     </div>
+
+    <!-- Collapsible Mobile Menu -->
+    @if (isMenuOpen)
+    {
+        <div class="lg:hidden">
+            <nav class="flex flex-col gap-4 px-4 pb-4 text-white bg-purple-800">
+                <NavLink href="/" class="@GetNavLinkClass("/" == GetCurrentRoute())" @onclick="CloseMenu"
+                    Match="NavLinkMatch.All">
+                    <span class="fa fa-home"></span>
+                    <span>Home</span>
+                </NavLink>
+                <NavLink href="users" class="@GetNavLinkClass("users" == GetCurrentRoute())" @onclick="CloseMenu"
+                    Match="NavLinkMatch.Prefix">
+                    <span class="fa-solid fa-users"></span>
+                    <span>Clients</span>
+                </NavLink>
+                <NavLink href="workouts" class="@GetNavLinkClass("workouts" == GetCurrentRoute())" @onclick="CloseMenu"
+                    Match="NavLinkMatch.Prefix">
+                    <span class="fas fa-dumbbell"></span>
+                    <span>Workouts</span>
+                </NavLink>
+            </nav>
+        </div>
+    }
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private bool isMenuOpen = false;
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    private void CloseMenu()
+    {
+        isMenuOpen = false;
+    }
+
+    private string GetCurrentRoute()
+    {
+        // Use the Uri property of NavigationManager to get the current route.
+        return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
+    }
+
+    private string GetNavLinkClass(bool isActive)
+    {
+        return isActive
+        ? "mt-2 flex items-center gap-3 px-3 py-2 bg-purple-500 text-white rounded-lg shadow-lg hover:bg-purple-600"
+        : "mt-2 flex items-center gap-3 px-3 py-2 text-gray-200 hover:bg-purple-500 hover:text-white rounded-lg";
+    }
+}
