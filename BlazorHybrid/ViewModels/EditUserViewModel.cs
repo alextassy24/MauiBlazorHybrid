@@ -9,6 +9,7 @@ namespace BlazorHybrid.ViewModels
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly NavigationManager _navigationManager = navigationManager;
+
         public User? SelectedUser { get; private set; }
         public ObservableCollection<User> Users { get; private set; } = [];
 
@@ -17,9 +18,12 @@ namespace BlazorHybrid.ViewModels
             SelectedUser = _userRepository.GetById(id);
         }
 
-        public void NavigateToEdit(Guid id)
+        public void SaveUser()
         {
-            _navigationManager.NavigateTo($"/edit-user/{id}");
+            if (SelectedUser != null)
+            {
+                _userRepository.Update(SelectedUser);
+            }
         }
 
         public void NavigateBack()

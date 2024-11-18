@@ -1,0 +1,121 @@
+@page "/user/{Id:guid}"
+@inject UserViewModel UserViewModel
+
+<div class="max-w-4xl p-6 mx-auto mt-10 rounded-lg shadow-md bg-gray-50">
+    <!-- Back Button -->
+    <button class="flex items-center px-4 py-2 mb-6 text-sm font-semibold text-white transition bg-gray-600 rounded-md shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+            @onclick="NavigateBack">
+        <i class="mr-2 fa-solid fa-arrow-left"></i> Back
+    </button>
+
+    <!-- User Header -->
+    <div class="flex items-center justify-between pb-4 mb-6 border-b">
+        <h1 class="text-2xl font-bold text-gray-800">User Details</h1>
+        <button class="flex items-center px-4 py-2 text-sm font-semibold text-white transition bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
+                @onclick="NavigateToEdit">
+            <i class="mr-2 fa-solid fa-pen-to-square"></i> Edit
+        </button>
+    </div>
+
+    <!-- User Information -->
+    @if (UserViewModel.SelectedUser != null)
+    {
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <p><span class="font-semibold text-gray-700">First Name:</span> @UserViewModel.SelectedUser.FirstName</p>
+            <p><span class="font-semibold text-gray-700">Last Name:</span> @UserViewModel.SelectedUser.LastName</p>
+            <p><span class="font-semibold text-gray-700">Email:</span> @UserViewModel.SelectedUser.Email</p>
+            <p><span class="font-semibold text-gray-700">Phone:</span> @UserViewModel.SelectedUser.PhoneNumber</p>
+            <p><span class="font-semibold text-gray-700">Gender:</span> @UserViewModel.SelectedUser.Gender</p>
+        </div>
+
+        <!-- Workouts Section -->
+        <div class="mt-8">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b">
+                <h2 class="text-xl font-bold text-gray-800">User Workouts</h2>
+                <button class="flex items-center px-3 py-2 text-sm font-semibold text-white transition bg-purple-500 rounded-md shadow hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-opacity-50">
+                    <i class="mr-2 fa-solid fa-plus"></i> Add Workout
+                </button>
+            </div>
+            @if (UserViewModel.SelectedUser.Workouts?.Count > 0)
+            {
+                <ul class="grid gap-4">
+                    @foreach (var workout in UserViewModel.SelectedUser.Workouts)
+                    {
+                        <li class="p-4 border-l-4 border-purple-500 rounded-lg shadow bg-purple-50 hover:bg-purple-100">
+                            <h3 class="font-semibold text-purple-700">@workout.Name</h3>
+                            <p class="text-sm text-gray-600">@workout.Description</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="p-4 text-center text-red-500 bg-red-100 rounded-md shadow">No workouts found.</p>
+            }
+        </div>
+
+        <!-- Meals Section -->
+        <div class="mt-8">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b">
+                <h2 class="text-xl font-bold text-gray-800">User Meals</h2>
+                <button class="flex items-center px-3 py-2 text-sm font-semibold text-white transition bg-green-500 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-opacity-50">
+                    <i class="mr-2 fa-solid fa-plus"></i> Add Meal
+                </button>
+            </div>
+            @if (UserViewModel.SelectedUser.Meals?.Count > 0)
+            {
+                <ul class="grid gap-4">
+                    @foreach (var meal in UserViewModel.SelectedUser.Meals)
+                    {
+                        <li class="p-4 border-l-4 border-green-500 rounded-lg shadow bg-green-50 hover:bg-green-100">
+                            <h3 class="font-semibold text-green-700">@meal.Name</h3>
+                            <p class="text-sm text-gray-600">@meal.Description</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="p-4 text-center text-red-500 bg-red-100 rounded-md shadow">No meals found.</p>
+            }
+        </div>
+
+        <!-- Delete Button -->
+        <div class="flex justify-end mt-8">
+            <button class="flex items-center px-4 py-2 text-sm font-semibold text-white transition bg-red-500 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-opacity-50"
+                    @onclick="DeleteUser">
+                <i class="mr-2 fa-solid fa-trash-can"></i> Delete User
+            </button>
+        </div>
+    }
+    else
+    {
+        <p class="p-4 text-center text-red-500 bg-red-100 rounded-md shadow">User not found.</p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        UserViewModel.LoadUser(Id);
+    }
+
+    private void NavigateToEdit()
+    {
+        UserViewModel.NavigateToEdit(Id);
+    }
+
+    private void DeleteUser()
+    {
+        UserViewModel.RemoveUser(Id);
+        NavigateBack();
+    }
+
+    private void NavigateBack()
+    {
+        UserViewModel.NavigateBack();
+    }
+}

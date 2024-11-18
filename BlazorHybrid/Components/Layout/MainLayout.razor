@@ -1,10 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="mb-10 sidebar">
-        <NavMenu />
-    </div>
-    <main>
+<div class="flex flex-col min-h-screen bg-gray-100">
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 z-50 w-full">
+        <TopNavMenu />
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow mt-14">
         @Body
     </main>
+
+    <!-- Bottom Navigation Bar -->
+    <footer class="fixed bottom-0 z-50 w-full">
+        <BottomNavMenu />
+    </footer>
 </div>

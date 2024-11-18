@@ -1,0 +1,54 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="fixed z-50 h-14 max-w-[95%] w-[95%] mx-auto bg-white border border-gray-200 rounded-full shadow-lg bottom-4 left-1/2 transform -translate-x-1/2 dark:bg-gray-700 dark:border-gray-600">
+    <div class="grid h-full grid-cols-5 mx-auto">
+        
+
+         <NavLink href="/workouts" class="inline-flex flex-col items-center justify-center px-6 rounded-l-full hover:bg-gray-50 dark:hover:bg-gray-800 group">
+            <i class="w-6 h-6 text-gray-500 fa-solid fa-dumbbell dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-500"></i>
+            <span class="sr-only">Workouts</span>
+        </NavLink>
+
+        <NavLink href="/meals" class="inline-flex flex-col items-center justify-center px-6 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+            <i class="w-6 h-6 text-gray-500 fa-solid fa-utensils dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-500"></i>
+            <span class="sr-only">Meals</span>
+        </NavLink>
+
+        <div class="flex items-center justify-center">
+            <button type="button" class="inline-flex items-center justify-center w-10 h-10 font-medium bg-purple-700 rounded-full shadow-lg hover:bg-purple-800 group focus:ring-4 focus:ring-purple-300 focus:outline-none dark:focus:ring-purple-800">
+                <i class="text-white fa-solid fa-plus"></i>
+                <span class="sr-only">Add New</span>
+            </button>
+        </div>
+
+        <NavLink href="/progress" class="inline-flex flex-col items-center justify-center px-6 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+                 Match="NavLinkMatch.All">
+            <i class="w-6 h-6 text-gray-500 fa-solid fa-chart-line dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-500"></i>
+            <span class="sr-only">Progress</span>
+        </NavLink>
+
+        <NavLink href="/profile" class="inline-flex flex-col items-center justify-center px-6 rounded-r-full hover:bg-gray-50 dark:hover:bg-gray-800 group">
+            <i class="w-6 h-6 text-gray-500 fa-solid fa-user dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-500"></i>
+            <span class="sr-only">Profile</span>
+        </NavLink>
+    </div>
+</div>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    private void CloseMenu()
+    {
+        isMenuOpen = false;
+    }
+
+    private string GetCurrentRoute()
+    {
+        return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
+    }
+}

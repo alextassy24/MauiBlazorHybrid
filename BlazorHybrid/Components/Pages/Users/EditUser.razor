@@ -1,0 +1,82 @@
+@page "/edit-user/{Id:guid}"
+@inject EditUserViewModel UserViewModel
+
+<div class="p-5 mx-5 mt-10 bg-gray-100 rounded-lg shadow-lg">
+    <button class="px-4 py-2 mb-8 text-white bg-gray-500 rounded hover:bg-gray-600" @onclick="NavigateBack">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="flex items-center justify-between mb-5">
+        <h1 class="text-2xl font-bold text-gray-800">Edit User</h1>
+    </div>
+
+    @if (UserViewModel.SelectedUser != null)
+    {
+        <EditForm Model="UserViewModel.SelectedUser" OnValidSubmit="SaveChanges">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="space-y-4">
+                <div>
+                    <label for="firstName" class="block font-bold text-gray-700">First Name</label>
+                    <input id="firstName" @bind="UserViewModel.SelectedUser.FirstName" class="w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label for="lastName" class="block font-bold text-gray-700">Last Name</label>
+                    <input id="lastName" @bind="UserViewModel.SelectedUser.LastName" class="w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label for="email" class="block font-bold text-gray-700">Email</label>
+                    <input id="email" type="email" @bind="UserViewModel.SelectedUser.Email"
+                        class="w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label for="phone" class="block font-bold text-gray-700">Phone Number</label>
+                    <input id="phone" @bind="UserViewModel.SelectedUser.PhoneNumber" class="w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label for="gender" class="block font-bold text-gray-700">Gender</label>
+                    <select id="gender" @bind="UserViewModel.SelectedUser.Gender" class="w-full p-2 border rounded">
+                        @foreach (var gender in Enum.GetValues(typeof(Gender)))
+                        {
+                            <option value="@gender">@gender</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">Save</button>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <dÍiv class="p-5 mx-auto font-bold text-center text-red-600 bg-red-300 rounded-lg shadow-lg">User not found.</dÍiv>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        UserViewModel.LoadUser(Id);
+    }
+
+    private void SaveChanges()
+    {
+        UserViewModel.SaveUser();
+        NavigateBack();
+    }
+
+    private void NavigateBack()
+    {
+        UserViewModel.NavigateBack();
+    }
+}

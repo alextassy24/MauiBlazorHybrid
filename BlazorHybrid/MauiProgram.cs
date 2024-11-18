@@ -14,8 +14,14 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
 
+        builder.Services.AddTransient<UsersViewModel>();
         builder.Services.AddTransient<UserViewModel>();
+        builder.Services.AddTransient<EditUserViewModel>();
         builder.Services.AddTransient<WorkoutViewModel>();
+        builder.Services.AddTransient<MealsViewModel>();
+        // builder.Services.AddTransient<MealModel>();
+        // builder.Services.AddTransient<EditMealViewModel>();
+
 
         builder.Services.AddSingleton<IUserRepository, UserRepository>();
         builder.Services.AddSingleton<IWorkoutRepository, WorkoutRepository>();
