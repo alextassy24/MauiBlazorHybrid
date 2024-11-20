@@ -1,5 +1,5 @@
 using BlazorHybrid.Interfaces.Repos;
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.Models;
 
 namespace BlazorHybrid.Repositories
 {

@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using BlazorHybrid.Interfaces.Repos;
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.DTO;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorHybrid.ViewModels
@@ -10,8 +10,8 @@ namespace BlazorHybrid.ViewModels
         private readonly IUserRepository _userRepository = userRepository;
         private readonly NavigationManager _navigationManager = navigationManager;
 
-        public User? SelectedUser { get; private set; }
-        public ObservableCollection<User> Users { get; private set; } = [];
+        public UserDto SelectedUser { get; private set; }
+        public ObservableCollection<UserDto> Users { get; private set; } = [];
 
         public void LoadUser(Guid id)
         {
@@ -20,7 +20,7 @@ namespace BlazorHybrid.ViewModels
 
         public void SaveUser()
         {
-            if (SelectedUser != null)
+            if (SelectedUser is not null)
             {
                 _userRepository.Update(SelectedUser);
             }

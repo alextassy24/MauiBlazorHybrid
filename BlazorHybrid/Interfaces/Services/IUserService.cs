@@ -1,7 +1,7 @@
 using BlazorHybrid.Interfaces.Repos;
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.DTO;
 
 namespace BlazorHybrid.Interfaces.Services
 {
-    public interface IUserService : IRepository<User> { }
+    public interface IUserService : IAsyncRepository<UserDto> { }
 }

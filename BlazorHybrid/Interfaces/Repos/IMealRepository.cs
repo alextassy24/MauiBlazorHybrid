@@ -1,4 +1,4 @@
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.Models;
 
 namespace BlazorHybrid.Interfaces.Repos
 {

@@ -1,20 +1,21 @@
 using BlazorHybrid.Interfaces.Repos;
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.DTO;
+using BlazorHybrid.Shared.Models;
 
 namespace BlazorHybrid.Repos
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users = [];
+        private readonly List<UserDto> _users = [];
         public UserRepository()
         {
             _users =
             [
-                new User { FirstName = "Ana", LastName = "Banana"},
-                new User { FirstName = "Tanță", LastName = "Prestanță"},
-                new User { FirstName = "Tanase", LastName = "Alexandru"},
-                new User { FirstName = "Gruia", LastName = "Cristian"},
-                new User { FirstName = "Sirbu", LastName = "Gabriel"},
+                new UserDto { FirstName = "Ana", LastName = "Banana"},
+                new UserDto { FirstName = "Tanță", LastName = "Prestanță"},
+                new UserDto { FirstName = "Tanase", LastName = "Alexandru"},
+                new UserDto { FirstName = "Gruia", LastName = "Cristian"},
+                new UserDto { FirstName = "Sirbu", LastName = "Gabriel"},
             ];
             foreach(var user in _users)
             {
@@ -22,15 +23,15 @@ namespace BlazorHybrid.Repos
                 user.Email = $"{user.FirstName.ToLower()}.{user.LastName.ToLower()}@example.com";
             }
         }
-        public User GetById(object id) => _users.FirstOrDefault(u => u.Id == (Guid)id) ?? new User();
-        public List<User> GetAll() => _users;
-        public void Add(User user) => _users.Add(user);
-        public void Update(User user)
+        public UserDto GetById(object id) => _users.FirstOrDefault(u => u.Id == (Guid)id) ?? new UserDto();
+        public List<UserDto> GetAll() => _users;
+        public void Add(UserDto user) => _users.Add(user);
+        public void Update(UserDto user)
         {
             var index = _users.FindIndex(u => u.Id == user.Id);
             if (index != -1) _users[index] = user;
         }
         public void Delete(object id) => _users.RemoveAll(u => u.Id == (Guid)id);
-        public User GetByEmail(string email) => _users.FirstOrDefault(u => u.Email == email) ?? new User();
+        public UserDto GetByEmail(string email) => _users.FirstOrDefault(u => u.Email == email) ?? new UserDto();
     }
 }

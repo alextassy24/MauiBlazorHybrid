@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using BlazorHybrid.Interfaces.Repos;
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorHybrid.ViewModels

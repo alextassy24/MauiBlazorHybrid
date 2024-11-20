@@ -1,0 +1,130 @@
+@page "/register"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<ScrollView>
+    <div class="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
+        <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+            <h1 class="text-2xl font-bold text-center text-gray-800">Create Your Account</h1>
+            <p class="mt-2 text-center text-gray-600">Sign up to get started</p>
+
+            <!-- Scrollable form container -->
+            <EditForm Model="RegisterModel" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                
+                <div class="mt-10 space-y-4">
+                    <div>
+                        <label for="firstName" class="@LabelClass">First Name</label>
+                        <InputText id="firstName" 
+                            class="@InputClass" 
+                            @bind-Value="RegisterModel.FirstName" />
+                        <ValidationMessage For="@(() => RegisterModel.FirstName)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="lastName" class="@LabelClass">Last Name</label>
+                        <InputText id="lastName" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.LastName" />
+                        <ValidationMessage For="@(() => RegisterModel.LastName)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="email" class="@LabelClass">Email Address</label>
+                        <InputText id="email" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.Email" />
+                        <ValidationMessage For="@(() => RegisterModel.Email)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="phoneNumber" class="@LabelClass">Phone Number</label>
+                        <InputText id="phoneNumber" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.PhoneNumber" />
+                        <ValidationMessage For="@(() => RegisterModel.PhoneNumber)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="gender" class="@LabelClass">Gender</label>
+                        <InputSelect id="gender" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.Gender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => RegisterModel.Gender)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="dateOfBirth" class="@LabelClass">Date of Birth</label>
+                        <InputDate id="dateOfBirth" 
+                            class="@InputClass" 
+                            @bind-Value="RegisterModel.DateOfBirth" />
+                        <ValidationMessage For="@(() => RegisterModel.DateOfBirth)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="password" class="@LabelClass">Password</label>
+                        <InputText id="password" type="password" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.Password" />
+                        <ValidationMessage For="@(() => RegisterModel.Password)" class="@ErrorClass" />
+                    </div>
+
+                    <div>
+                        <label for="confirmPassword" class="@LabelClass">Confirm Password</label>
+                        <InputText id="confirmPassword" type="password" 
+                            class="@InputClass"
+                            @bind-Value="RegisterModel.ConfirmPassword" />
+                        <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" class="@ErrorClass" />
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-2 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
+                        Sign Up
+                    </button>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
+            }
+
+            <p class="mt-6 text-center text-gray-600">
+                Already have an account?
+                <a href="/login" class="font-semibold text-indigo-600 hover:underline">Log In</a>
+            </p>
+        </div>
+    </div>
+</ScrollView>
+
+@code {
+    private RegisterRequestDto RegisterModel = new RegisterRequestDto();
+    private string ErrorMessage;
+    private string ErrorClass = "mt-1 text-sm text-red-500";
+    private string LabelClass = "block text-sm font-medium text-gray-700";
+    private string InputClass = "w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500";
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            var isSuccess = await AuthService.RegisterAsync(RegisterModel);
+            if (isSuccess)
+            {
+                NavigationManager.NavigateTo("/verify");
+            }
+            else
+            {
+                ErrorMessage = "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+}

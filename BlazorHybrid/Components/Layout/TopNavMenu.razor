@@ -1,6 +1,6 @@
 @inject NavigationManager NavigationManager
 
-<div class="fixed top-0 z-50 w-full bg-purple-700 shadow">
+<div class="fixed top-0 z-50 w-full bg-purple-700 shadow-lg">
     <div class="flex items-center justify-between px-4 py-3">
         <!-- Brand Name -->
         <a href="/" class="flex items-center text-xl font-bold text-white hover:text-purple-300">
@@ -15,7 +15,7 @@
 
         <!-- Navigation Links (visible on larger screens) -->
         <nav class="hidden gap-6 lg:flex">
-            <NavLink href="/" class="@GetNavLinkClass("/")" Match="NavLinkMatch.All">
+            <NavLink href="/" class="@GetNavLinkClass("/")" Match="NavLinkMatch.Prefix">
                 <i class="fa fa-home"></i> <span>Home</span>
             </NavLink>
             <NavLink href="/users" class="@GetNavLinkClass("users")" Match="NavLinkMatch.Prefix">
@@ -24,6 +24,18 @@
             <NavLink href="/workouts" class="@GetNavLinkClass("workouts")" Match="NavLinkMatch.Prefix">
                 <i class="fa-solid fa-dumbbell"></i> <span>Workouts</span>
             </NavLink>
+            @if (isLoggedIn)
+            {
+                        <NavLink href="/workouts" class="@btnLogOut" Match="NavLinkMatch.Prefix">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span>
+                        </NavLink>
+            }
+            else
+            {
+                        <NavLink href="/workouts" class="@btnLogIn" Match="NavLinkMatch.Prefix">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Log in</span>
+                        </NavLink>
+            }
         </nav>
     </div>
 
@@ -31,7 +43,7 @@
     @if (isMenuOpen)
     {
         <nav class="flex flex-col gap-4 px-4 pb-4 text-white bg-purple-800 lg:hidden">
-            <NavLink href="/" class="@GetNavLinkClass("/")" Match="NavLinkMatch.All" @onclick="CloseMenu">
+            <NavLink href="/" class="@GetNavLinkClass("/")" Match="NavLinkMatch.Prefix" @onclick="CloseMenu">
                 <i class="fa fa-home"></i> Home
             </NavLink>
             <NavLink href="/users" class="@GetNavLinkClass("users")" Match="NavLinkMatch.Prefix" @onclick="CloseMenu">
@@ -40,12 +52,27 @@
             <NavLink href="/workouts" class="@GetNavLinkClass("workouts")" Match="NavLinkMatch.Prefix" @onclick="CloseMenu">
                 <i class="fa-solid fa-dumbbell"></i> Workouts
             </NavLink>
+        @if (isLoggedIn)
+        {
+            <NavLink href="/" @onclick="CloseMenu" class="@btnLogOut" Match="NavLinkMatch.Prefix">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span>
+            </NavLink>
+        }
+        else
+        {
+            <NavLink href="/login" @onclick="CloseMenu" class="@btnLogIn" Match="NavLinkMatch.Prefix">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Log in</span>
+            </NavLink>
+        }
         </nav>
     }
 </div>
 
 @code {
     private bool isMenuOpen = false;
+    private bool isLoggedIn = false;
+    private string btnLogIn = "flex items-center gap-2 px-2 py-2 rounded-lg shadow text-white font-bold bg-blue-700";
+    private string btnLogOut = "flex items-center gap-2 px-2 py-2 rounded-lg shadow text-white font-bold bg-red-700";
 
     private void ToggleMenu()
     {

@@ -1,0 +1,51 @@
+@page "/login"
+
+<div class="flex items-start justify-center min-h-screen p-5 pt-10 bg-gradient-to-b from-purple-600 to-indigo-800">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold text-center text-gray-800">Welcome Back!</h1>
+        <p class="mt-2 text-center text-gray-600">Login to your account</p>
+
+        <form class="mt-10 space-y-4">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email"
+                    class="w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500" />
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" placeholder="Enter your password"
+                    class="w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500" />
+            </div>
+
+            <div class="flex justify-end">
+                <a href="/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot Password?</a>
+            </div>
+
+            <button type="submit"
+                class="w-full py-2 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
+                Login
+            </button>
+        </form>
+
+        <div class="flex items-center justify-between mt-6">
+            <span class="w-full border-t"></span>
+            <span class="px-4 text-gray-500">or</span>
+            <span class="w-full border-t"></span>
+        </div>
+
+        <div class="flex justify-center gap-4 mt-6">
+            <button class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100">
+                <i class="text-red-500 fa-brands fa-google"></i> Google
+            </button>
+            <button class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100">
+                <i class="text-blue-600 fa-brands fa-facebook"></i> Facebook
+            </button>
+        </div>
+
+        <p class="mt-6 text-center text-gray-600">
+            Don't have an account?
+            <a href="/register" class="font-semibold text-indigo-600 hover:underline">Sign Up</a>
+        </p>
+    </div>
+</div>

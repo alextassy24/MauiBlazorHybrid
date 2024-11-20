@@ -1,9 +1,9 @@
-using BlazorHybrid.Models;
+using BlazorHybrid.Shared.DTO;
 
 namespace BlazorHybrid.Interfaces.Repos
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<UserDto>
     {
-        User GetByEmail(string email);
+        UserDto GetByEmail(string email);
     }
 }

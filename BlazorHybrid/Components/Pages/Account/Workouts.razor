@@ -1,5 +1,5 @@
 @page "/workouts"
-@inject BlazorHybrid.ViewModels.WorkoutViewModel WorkoutViewModel
+@inject WorkoutViewModel WorkoutViewModel
 @{
     string btnPrimary="px-2 py-2 rounded-lg shadow text-white font-bold bg-purple-700";
 }
@@ -45,7 +45,7 @@
     }
     else
     {
-        <p class="p-5 font-bold text-center text-red-600 bg-red-300 rounded-lg shadow">No workouts found.</p>
+        <p class="p-3 font-bold text-center text-red-600 bg-red-300 rounded-lg shadow">No workouts found.</p>
     }
 </div>
 

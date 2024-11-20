@@ -14,6 +14,11 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
 
+        // Add base URL for API
+        const string baseApiUrl = "http://localhost:5159";
+
+        builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseApiUrl) });
+
         builder.Services.AddTransient<UsersViewModel>();
         builder.Services.AddTransient<UserViewModel>();
         builder.Services.AddTransient<EditUserViewModel>();
@@ -28,6 +33,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<IExerciseRepository, ExerciseRepository>();
         builder.Services.AddSingleton<IMealRepository, MealRepository>();
         builder.Services.AddSingleton<IUserService, UserService>();
+        builder.Services.AddSingleton<IHttpService, HttpService>();
+        builder.Services.AddSingleton(
+            new HttpClient { BaseAddress = new Uri("http://localhost:5159/") }
+        );
+        builder.Services.AddScoped<IAuthService, AuthService>();
 
         builder
             .UseMauiApp<App>()
@@ -38,10 +48,8 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 
-#if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
-#endif
 
         return builder.Build();
     }
