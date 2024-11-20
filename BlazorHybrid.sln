@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorHybrid.Shared", "BlazorHybrid.Shared\BlazorHybrid.Shared.csproj", "{40A68CDD-C585-404F-AE56-71BA6D4855C5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorHybrid", "BlazorHybrid\BlazorHybrid.csproj", "{76FA8E2B-F715-4C49-9033-70178B1EB633}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorHybridBackend", "BlazorHybridBackend\BlazorHybridBackend.csproj", "{105F2BFA-715C-4ADF-AEA7-008D0FD4EA86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +22,13 @@ Global
 		{76FA8E2B-F715-4C49-9033-70178B1EB633}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76FA8E2B-F715-4C49-9033-70178B1EB633}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76FA8E2B-F715-4C49-9033-70178B1EB633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{105F2BFA-715C-4ADF-AEA7-008D0FD4EA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{105F2BFA-715C-4ADF-AEA7-008D0FD4EA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{105F2BFA-715C-4ADF-AEA7-008D0FD4EA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{105F2BFA-715C-4ADF-AEA7-008D0FD4EA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A68CDD-C585-404F-AE56-71BA6D4855C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A68CDD-C585-404F-AE56-71BA6D4855C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A68CDD-C585-404F-AE56-71BA6D4855C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A68CDD-C585-404F-AE56-71BA6D4855C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -27,4 +27,4 @@ AppPackages/
 
 .vscode/
 
-.gitignore
+*.gitignore
