@@ -2,16 +2,18 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-<ScrollView>
     <div class="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
         <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
             <h1 class="text-2xl font-bold text-center text-gray-800">Create Your Account</h1>
             <p class="mt-2 text-center text-gray-600">Sign up to get started</p>
 
-            <!-- Scrollable form container -->
             <EditForm Model="RegisterModel" OnValidSubmit="HandleRegister">
                 <DataAnnotationsValidator />
-                
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
+            }
                 <div class="mt-10 space-y-4">
                     <div>
                         <label for="firstName" class="@LabelClass">First Name</label>
@@ -88,10 +90,10 @@
                 </div>
             </EditForm>
 
-            @if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
-            }
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+                        <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
+        }
 
             <p class="mt-6 text-center text-gray-600">
                 Already have an account?
@@ -99,11 +101,10 @@
             </p>
         </div>
     </div>
-</ScrollView>
 
 @code {
     private RegisterRequestDto RegisterModel = new RegisterRequestDto();
-    private string ErrorMessage;
+    private string ErrorMessage = string.Empty;
     private string ErrorClass = "mt-1 text-sm text-red-500";
     private string LabelClass = "block text-sm font-medium text-gray-700";
     private string InputClass = "w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500";
@@ -113,13 +114,13 @@
         try
         {
             var isSuccess = await AuthService.RegisterAsync(RegisterModel);
-            if (isSuccess)
+            if (isSuccess == null)
             {
                 NavigationManager.NavigateTo("/verify");
             }
             else
             {
-                ErrorMessage = "Registration failed. Please try again.";
+                ErrorMessage = isSuccess;
             }
         }
         catch (Exception ex)

@@ -1,21 +1,35 @@
 @page "/login"
+@inject UserState UserState
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
 
 <div class="flex items-start justify-center min-h-screen p-5 pt-10 bg-gradient-to-b from-purple-600 to-indigo-800">
     <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
         <h1 class="text-2xl font-bold text-center text-gray-800">Welcome Back!</h1>
         <p class="mt-2 text-center text-gray-600">Login to your account</p>
 
-        <form class="mt-10 space-y-4">
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
+        }
+
+        <EditForm Model="LoginModel" OnValidSubmit="HandleLogin" class="mt-10 space-y-4">
+            <DataAnnotationsValidator />
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                <input type="email" id="email" placeholder="Enter your email"
+                <InputText id="email" placeholder="Enter your email" @bind-Value="LoginModel.Email"
                     class="w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500" />
+                <ValidationMessage For="@(() => LoginModel.Email)" class="@ErrorClass" />
+
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" placeholder="Enter your password"
+                <InputText id="password" type="password" placeholder="Enter your password"
+                    @bind-Value="LoginModel.Password"
                     class="w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500" />
+                <ValidationMessage For="@(() => LoginModel.Password)" class="@ErrorClass" />
+
             </div>
 
             <div class="flex justify-end">
@@ -26,9 +40,9 @@
                 class="w-full py-2 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
                 Login
             </button>
-        </form>
+        </EditForm>
 
-        <div class="flex items-center justify-between mt-6">
+        @* <div class="flex items-center justify-between mt-6">
             <span class="w-full border-t"></span>
             <span class="px-4 text-gray-500">or</span>
             <span class="w-full border-t"></span>
@@ -41,7 +55,7 @@
             <button class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100">
                 <i class="text-blue-600 fa-brands fa-facebook"></i> Facebook
             </button>
-        </div>
+        </div> *@
 
         <p class="mt-6 text-center text-gray-600">
             Don't have an account?
@@ -49,3 +63,35 @@
         </p>
     </div>
 </div>
+
+@code {
+    private LoginRequestDto LoginModel = new();
+    private string ErrorMessage = string.Empty;
+    private string ErrorClass = "mt-1 text-sm text-red-500";
+
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var result = await AuthService.LoginAsync(LoginModel);
+            if (result.IsSuccess)
+            {
+                UserState.SetLoggedInUser(result.User); // Save user state
+                NavigationManager.NavigateTo("/dashboard");
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            ErrorMessage = $"HTTP Request Failed: {httpEx}";
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = e.ToString();
+        }
+    }
+}

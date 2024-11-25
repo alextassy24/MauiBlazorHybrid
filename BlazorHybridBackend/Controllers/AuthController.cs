@@ -16,19 +16,15 @@ namespace BlazorHybridBackend.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
+        UserManager<User> userManager,
         IConfiguration configuration,
         IEmailService emailService,
-        TokenUtils tokenUtils,
         IUserService userService
     ) : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager = userManager;
-        private readonly SignInManager<IdentityUser> _signInManager = signInManager;
+        private readonly UserManager<User> _userManager = userManager;
         private readonly IConfiguration _configuration = configuration;
         private readonly IEmailService _emailService = emailService;
-        private readonly TokenUtils _tokenUtils = tokenUtils;
         private readonly IUserService _userService = userService;
 
         // 1. Register Endpoint
@@ -76,17 +72,30 @@ namespace BlazorHybridBackend.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
+            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
                 return Unauthorized("Invalid credentials");
 
             var token = GenerateJwtToken(user);
-            return Ok(new { Token = token });
+
+            return Ok(
+                new LoginResponseDto
+                {
+                    Token = token,
+                    User = new UserDto
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                    },
+                }
+            );
         }
 
         [HttpPost("send-confirmation-email")]

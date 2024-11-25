@@ -13,12 +13,12 @@ namespace BlazorHybrid.ViewModels
         public UserDto? SelectedUser { get; private set; }
         public ObservableCollection<UserDto> Users { get; private set; } = [];
 
-        public void LoadUser(Guid id)
+        public void LoadUser(string id)
         {
             SelectedUser = _userRepository.GetById(id);
         }
 
-        public void RemoveUser(Guid userId)
+        public void RemoveUser(string userId)
         {
             _userRepository.Delete(userId);
 
@@ -29,7 +29,7 @@ namespace BlazorHybrid.ViewModels
             }
         }
 
-        public void NavigateToEdit(Guid id)
+        public void NavigateToEdit(string id)
         {
             _navigationManager.NavigateTo($"/edit-user/{id}");
         }

@@ -43,7 +43,7 @@ namespace BlazorHybrid.ViewModels
             );
         }
 
-        public void RemoveUser(Guid userId)
+        public void RemoveUser(string userId)
         {
             _userRepository.Delete(userId);
 
@@ -54,12 +54,12 @@ namespace BlazorHybrid.ViewModels
             }
         }
 
-        public void GoToUserPage(Guid id)
+        public void GoToUserPage(string id)
         {
             _navigationManager.NavigateTo($"/user/{id}");
         }
 
-        public void NavigateToEdit(Guid id)
+        public void NavigateToEdit(string id)
         {
             _navigationManager.NavigateTo($"/edit-user/{id}");
         }

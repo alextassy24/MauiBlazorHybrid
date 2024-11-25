@@ -3,6 +3,7 @@ using BlazorHybrid.Interfaces.Services;
 using BlazorHybrid.Repos;
 using BlazorHybrid.Repositories;
 using BlazorHybrid.Services;
+using BlazorHybrid.Shared.DTO;
 using BlazorHybrid.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -15,9 +16,6 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
 
         // Add base URL for API
-        const string baseApiUrl = "http://localhost:5159";
-
-        builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseApiUrl) });
 
         builder.Services.AddTransient<UsersViewModel>();
         builder.Services.AddTransient<UserViewModel>();
@@ -26,17 +24,15 @@ public static class MauiProgram
         builder.Services.AddTransient<MealsViewModel>();
         // builder.Services.AddTransient<MealModel>();
         // builder.Services.AddTransient<EditMealViewModel>();
-
-
         builder.Services.AddSingleton<IUserRepository, UserRepository>();
         builder.Services.AddSingleton<IWorkoutRepository, WorkoutRepository>();
         builder.Services.AddSingleton<IExerciseRepository, ExerciseRepository>();
         builder.Services.AddSingleton<IMealRepository, MealRepository>();
+        builder.Services.AddSingleton<UserState>();
         builder.Services.AddSingleton<IUserService, UserService>();
         builder.Services.AddSingleton<IHttpService, HttpService>();
-        builder.Services.AddSingleton(
-            new HttpClient { BaseAddress = new Uri("http://localhost:5159/") }
-        );
+        builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri("http://10.0.2.2:5159/") });
+
         builder.Services.AddScoped<IAuthService, AuthService>();
 
         builder

@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-      <TargetFrameworks>net8.0;</TargetFrameworks>
-      <Nullable>enable</Nullable>
+    <TargetFrameworks>net8.0-ios;net8.0-android;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

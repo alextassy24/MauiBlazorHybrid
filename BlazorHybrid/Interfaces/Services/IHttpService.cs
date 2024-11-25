@@ -1,11 +1,12 @@
-
 namespace BlazorHybrid.Interfaces.Services
 {
     public interface IHttpService
     {
-        Task<T> GetAsync<T>(string uri);
-        Task PostAsync<T>(string uri, T content);
-        Task PutAsync<T>(string uri, T content);
-        Task DeleteAsync(string uri);
+        Uri BaseAddress { get; }
+        Task<T> GetAsync<T>(string uri, string? token = null);
+        Task<TResponse> PostAsync<TRequest, TResponse>(string uri, TRequest content, string? token = null);
+        Task PostAsync<T>(string uri, T content, string? token = null);
+        Task PutAsync<T>(string uri, T content, string? token = null);
+        Task DeleteAsync(string uri, string? token = null);
     }
 }

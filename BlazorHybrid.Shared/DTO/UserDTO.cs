@@ -7,7 +7,7 @@ namespace BlazorHybrid.Shared.DTO
 {
     public class UserDto
     {
-        public Guid Id { get; set; } // Unique identifier for the user
+        public string Id { get; set; } = string.Empty;// Unique identifier for the user
         public string FirstName { get; set; } = string.Empty; // User's first name
         public string LastName { get; set; } = string.Empty; // User's last name
         public string Email { get; set; } = string.Empty; // User's email address
@@ -19,7 +19,7 @@ namespace BlazorHybrid.Shared.DTO
         public string Country { get; set; } = string.Empty; // User's country
         public bool IsClient { get; set; } // Indicates if the user is a client
         public bool IsTrainer { get; set; } // Indicates if the user is a trainer
-        public Guid? TrainerId { get; set; } // Trainer's ID, if applicable
+        public string? TrainerId { get; set; } // Trainer's ID, if applicable
         public DateTime LastLogin { get; set; } // Timestamp of the user's last login
         public int DaysStreak { get; set; } // Number of consecutive days logged in or active
 

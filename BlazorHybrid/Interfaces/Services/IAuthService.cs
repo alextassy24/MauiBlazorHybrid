@@ -4,6 +4,8 @@ namespace BlazorHybrid.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(RegisterRequestDto registerRequest);
+        Task<string> RegisterAsync(RegisterRequestDto registerRequest);
+        Task<(bool IsSuccess, string Message, UserDto? User)> LoginAsync(LoginRequestDto loginRequest);
+        Task LogoutAsync();
     }
 }

@@ -108,10 +108,9 @@ builder.Services.AddCors(options =>
         "AllowSpecificOrigins",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5000", "https://your-app-domain.com") // Replace with actual frontend URLs
+            policy.AllowAnyOrigin() // Allows requests from any origin
                   .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
+                  .AllowAnyHeader();
         });
 });
 
@@ -136,6 +135,11 @@ else
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Incoming Request: {context.Request.Method} {context.Request.Path}");
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

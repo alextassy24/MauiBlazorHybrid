@@ -1,4 +1,5 @@
 @inject NavigationManager NavigationManager
+@inject UserState UserState
 
 <div class="fixed top-0 z-50 w-full bg-purple-700 shadow-lg">
     <div class="flex items-center justify-between px-4 py-3">
@@ -24,17 +25,17 @@
             <NavLink href="/workouts" class="@GetNavLinkClass("workouts")" Match="NavLinkMatch.Prefix">
                 <i class="fa-solid fa-dumbbell"></i> <span>Workouts</span>
             </NavLink>
-            @if (isLoggedIn)
+            @if (UserState.IsLoggedIn)
             {
-                        <NavLink href="/workouts" class="@btnLogOut" Match="NavLinkMatch.Prefix">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span>
-                        </NavLink>
+                <NavLink href="/workouts" class="@btnLogOut" Match="NavLinkMatch.Prefix">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span>
+                </NavLink>
             }
             else
             {
-                        <NavLink href="/workouts" class="@btnLogIn" Match="NavLinkMatch.Prefix">
-                            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Log in</span>
-                        </NavLink>
+                <NavLink href="/workouts" class="@btnLogIn" Match="NavLinkMatch.Prefix">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Log in</span>
+                </NavLink>
             }
         </nav>
     </div>
@@ -52,7 +53,7 @@
             <NavLink href="/workouts" class="@GetNavLinkClass("workouts")" Match="NavLinkMatch.Prefix" @onclick="CloseMenu">
                 <i class="fa-solid fa-dumbbell"></i> Workouts
             </NavLink>
-        @if (isLoggedIn)
+        @if (UserState.IsLoggedIn)
         {
             <NavLink href="/" @onclick="CloseMenu" class="@btnLogOut" Match="NavLinkMatch.Prefix">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span>
@@ -70,7 +71,6 @@
 
 @code {
     private bool isMenuOpen = false;
-    private bool isLoggedIn = false;
     private string btnLogIn = "flex items-center gap-2 px-2 py-2 rounded-lg shadow text-white font-bold bg-blue-700";
     private string btnLogOut = "flex items-center gap-2 px-2 py-2 rounded-lg shadow text-white font-bold bg-red-700";
 
@@ -90,5 +90,11 @@
         return currentRoute == route
             ? "flex items-center gap-2 px-3 py-2 text-white bg-purple-500 rounded-lg hover:bg-purple-600"
             : "flex items-center gap-2 px-3 py-2 text-gray-200 hover:bg-purple-500 hover:text-white rounded-lg";
+    }
+
+    private void Logout()
+    {
+        UserState.Logout();
+        NavigationManager.NavigateTo("/login");
     }
 }
