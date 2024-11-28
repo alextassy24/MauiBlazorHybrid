@@ -15,8 +15,6 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
 
-        // Add base URL for API
-
         builder.Services.AddTransient<UsersViewModel>();
         builder.Services.AddTransient<UserViewModel>();
         builder.Services.AddTransient<EditUserViewModel>();
@@ -45,6 +43,7 @@ public static class MauiProgram
         builder.Services.AddMauiBlazorWebView();
 
         builder.Services.AddBlazorWebViewDeveloperTools();
+        
         builder.Logging.AddDebug();
 
         return builder.Build();

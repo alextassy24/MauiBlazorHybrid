@@ -1,4 +1,100 @@
 @page "/verify"
+@inject UserState UserState
 @inject NavigationManager NavigationManager
+@inject IAuthService AuthService
 
-<p class="mt-40">Verify page</p>
+<div class="flex items-center justify-center h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-800">
+            Account Verification
+        </h1>
+        <p class="mt-3 text-center text-gray-600">Enter the 6-digit verification code sent to your email.</p>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="mt-4 text-sm text-center text-red-500">@ErrorMessage</p>
+        }
+
+        <EditForm OnValidSubmit="HandleVerification" class="mt-10">
+            <DataAnnotationsValidator />
+
+            <div class="flex justify-center space-x-2">
+                @for (int i = 0; i < 6; i++)
+                {
+                    <input @ref="@InputReferences[i]"
+                           type="text" maxlength="1" 
+                           @bind="CodeInputs[i]" 
+                           @bind:event="oninput"
+                           @onkeydown="@(e => HandleKeyDown(e, i))"
+                           class="w-10 h-12 text-xl text-center text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                }
+            </div>
+
+            <ValidationMessage For="@(() => VerificationCode)" class="mt-4 text-sm text-center text-red-500" />
+
+            <button type="submit"
+                    class="w-full py-3 mt-6 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
+                Verify
+            </button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private string[] CodeInputs = new string[6];
+    private ElementReference[] InputReferences = new ElementReference[6];
+    private string VerificationCode => string.Join("", CodeInputs);
+    private string ErrorMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // Initialize with empty values
+        for (int i = 0; i < CodeInputs.Length; i++)
+        {
+            CodeInputs[i] = string.Empty;
+        }
+    }
+
+    private async Task HandleVerification()
+    {
+        try
+        {
+            if (VerificationCode.Length != 6 || CodeInputs.Any(string.IsNullOrEmpty))
+            {
+                ErrorMessage = "Please fill all the fields correctly.";
+                return;
+            }
+
+            var result = await AuthService.VerifyAccountAsync(UserState.Email, VerificationCode);
+            if (result.IsSuccess)
+            {
+                UserState.ClearEmail();
+                NavigationManager.NavigateTo("/dashboard", true);
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Unexpected error: {ex.Message}";
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e, int index)
+    {
+        if (e.Key == "Backspace" && string.IsNullOrEmpty(CodeInputs[index]) && index > 0)
+        {
+            await InputReferences[index - 1].FocusAsync();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InputReferences[0].FocusAsync();
+        }
+    }
+}

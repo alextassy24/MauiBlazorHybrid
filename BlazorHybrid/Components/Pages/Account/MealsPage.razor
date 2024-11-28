@@ -1,0 +1,56 @@
+@page "/meals"
+@inject MealsViewModel MealsViewModel
+@inject UserState UserState
+
+@if (!UserState.IsLoggedIn)
+{
+            <Unauthorized />
+}
+else
+{
+    <div class="p-5">
+        <button 
+            onclick="window.history.back()" 
+            class="absolute flex items-center justify-center w-10 h-10 text-white transition-all duration-200 bg-purple-600 rounded-full shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-extrabold text-start">Your Meals</h1>
+            <button class="flex items-center gap-2 @btnPrimary p-4"
+                    @onclick="MealsViewModel.AddMeal">
+                <i class="fa-solid fa-plus"></i>
+                <span class="hidden md:inline-block">Add Meal</span>
+            </button>
+        </div>
+
+        @if (MealsViewModel.Meals?.Any() == true)
+            {
+                    <ul class="space-y-4">
+                    @foreach (var meal in MealsViewModel.Meals)
+                    {
+                                <li id="meal-@meal.Id" class="relative overflow-hidden bg-gray-100 rounded-lg shadow-md" @onclick="() => MealsViewModel.ViewMeal(meal.Id)">
+                                    <div id="content-@meal.Id" class="flex items-center justify-between p-4 transition-transform duration-300 bg-gray-100">
+                                        <div>
+                                            <p class="font-bold">@meal.Name</p>
+                                            <p class="text-gray-600">@meal.Description</p>
+                                        </div>
+                                        <button class="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                                                @onclick="() => MealsViewModel.EditMeal(meal.Id)">
+                                            <i class="fa-solid fa-pen"></i> 
+                                            <span class="hidden md:inline-block">Edit</span>
+                                        </button>
+                                    </div>
+                                </li>
+                    }
+                    </ul>
+            }
+            else
+            {
+                    <p class="p-3 font-bold text-center text-red-600 bg-red-300 rounded-lg shadow">No meals found.</p>
+            }
+    </div>
+}
+@code {
+    string btnPrimary = "px-2 py-2 rounded-lg shadow text-white font-bold bg-purple-700";
+
+}

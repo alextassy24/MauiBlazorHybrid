@@ -1,0 +1,27 @@
+@page "/error"
+@inject NavigationManager NavigationManager
+
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold text-red-600">An Error Occurred</h1>
+        <p class="mt-4 text-gray-700">@ErrorMessage</p>
+        <button @onclick="NavigateHome" class="px-4 py-2 mt-6 text-white bg-blue-500 rounded hover:bg-blue-600">
+            Go to Home
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        ErrorMessage ??= "An unexpected error occurred.";
+    }
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

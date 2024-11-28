@@ -1,0 +1,51 @@
+<NavLink href="@($"/workouts/category/{Category.ToString()}")" class="flex flex-col items-center p-4 transition-colors duration-150 bg-white border border-gray-100 shadow-sm rounded-2xl active:bg-gray-50">
+    <div class="flex items-center justify-center w-12 h-12 mb-3 @GetBackgroundColor(Category) rounded-xl">
+        <i class="text-xl @GetIconColor(Category) @GetIconClass(Category)"></i>
+    </div>
+    <h3 class="mb-1 font-semibold text-gray-800">@Category</h3>
+    <p class="text-sm text-gray-500">@WorkoutCount workouts</p>
+</NavLink>
+
+@code {
+    [Parameter]
+    public int WorkoutCount { get; set; }
+
+    [Parameter]
+    public Category Category { get; set; }
+
+    private string GetBackgroundColor(Category category)
+    {
+        return category switch
+        {
+            Category.Strength => "bg-purple-100",
+            Category.Hypertrophy => "bg-green-100",
+            Category.Cardio => "bg-blue-100",
+            Category.HIIT => "bg-orange-100",
+            _ => "bg-gray-100"
+        };
+    }
+
+    private string GetIconColor(Category category)
+    {
+        return category switch
+        {
+            Category.Strength => "text-purple-600",
+            Category.Hypertrophy => "text-green-600",
+            Category.Cardio => "text-blue-600",
+            Category.HIIT => "text-orange-600",
+            _ => "text-gray-600"
+        };
+    }
+
+    private string GetIconClass(Category category)
+    {
+        return category switch
+        {
+            Category.Strength => "fas fa-weight-hanging",
+            Category.Hypertrophy => "fas fa-dumbbell",
+            Category.Cardio => "fas fa-heart-pulse",
+            Category.HIIT => "fas fa-fire",
+            _ => "fas fa-question-circle"
+        };
+    }
+}

@@ -1,0 +1,134 @@
+@page "/workouts/category/{SelectedCategory}/create"
+@inject NavigationManager NavigationManager
+
+<div class="min-h-screen pb-24 bg-gray-50">
+    @* <!-- Header -->
+    <div class="relative pb-20">
+        <div class="absolute inset-0 @GetCategoryBackground() h-40 rounded-b-[40px] shadow-lg"></div>
+        
+        <!-- Back Button -->
+        <button 
+            onclick="window.history.back()" 
+            class="absolute flex items-center justify-center w-10 h-10 transition-all duration-200 top-4 left-4 backdrop-blur-md bg-black/20 rounded-xl hover:bg-black/30 focus:outline-none">
+            <i class="text-white fas fa-chevron-left"></i>
+        </button>
+
+        <div class="relative px-4 pt-16 text-center">
+            <div class="inline-block p-4 @GetCategoryBackground() rounded-2xl">
+                <i class="@GetCategoryIcon() text-3xl"></i>
+            </div>
+            <h1 class="mt-4 text-2xl font-bold text-gray-800">New @(EnumCategory?.ToString() ?? "Unknown") Workout</h1>
+            <p class="mt-2 text-gray-600">Create your custom workout routine</p>
+        </div>
+    </div> *@
+    <HeaderBannerComponent 
+        Title="@HeaderTitle" 
+        BackgroundColor="@GetCategoryBackground()"
+        HeightClass="h-40">
+    </HeaderBannerComponent>
+
+    <!-- Main Content -->
+    <div class="px-4 pt-48 space-y-6">
+        <!-- Basic Info Card -->
+        <div class="p-4 bg-white shadow-sm rounded-2xl">
+            <h2 class="mb-4 text-lg font-semibold text-gray-800">Basic Information</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Workout Name</label>
+                    <input type="text" 
+                           class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 @GetCategoryRingFocus()" 
+                           placeholder="Enter workout name">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Difficulty Level</label>
+                    <select class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 @GetCategoryRingFocus()">
+                        <option value="Bginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Description</label>
+                    <textarea 
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 @GetCategoryRingFocus()" 
+                        rows="4" 
+                        placeholder="Describe your workout"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4">
+            <button 
+                onclick="window.history.back()"
+                class="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100">
+                Cancel
+            </button>
+            <button class="flex-1 px-6 py-3 text-white rounded-xl @GetCategoryButton()">
+                Create Workout
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string SelectedCategory { get; set; } = string.Empty;
+
+    private Category? EnumCategory => Enum.TryParse<Category>(SelectedCategory, true, out var result) ? result : (Category?)null;
+    
+    private string HeaderTitle => $"Add {EnumCategory?.ToString() ?? "new"} Workout";
+
+
+    private string GetCategoryBackground()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "bg-purple-100",
+            Category.Cardio => "bg-blue-100",
+            Category.Hypertrophy => "bg-green-100",
+            Category.HIIT => "bg-red-100",
+            _ => "bg-gray-100"
+        };
+    }
+
+    private string GetCategoryIcon()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "text-purple-600 fas fa-weight-hanging",
+            Category.Cardio => "text-blue-600 fas fa-heart-pulse",
+            Category.Hypertrophy => "text-green-600 fas fa-dumbbell",
+            Category.HIIT => "text-red-600 fas fa-fire",
+            _ => "text-gray-500 fas fa-question-circle"
+        };
+    }
+
+    private string GetCategoryButton()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "bg-purple-600 hover:bg-purple-700 active:bg-purple-800",
+            Category.Cardio => "bg-blue-600 hover:bg-blue-700 active:bg-blue-800",
+            Category.Hypertrophy => "bg-green-600 hover:bg-green-700 active:bg-green-800",
+            Category.HIIT => "bg-red-600 hover:bg-red-700 active:bg-red-800",
+            _ => "bg-gray-600 hover:bg-gray-700 active:bg-gray-800"
+        };
+    }
+
+    private string GetCategoryRingFocus()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "focus:ring-purple-200",
+            Category.Cardio => "focus:ring-blue-200",
+            Category.Hypertrophy => "focus:ring-green-200",
+            Category.HIIT => "focus:ring-red-200",
+            _ => "focus:ring-gray-200"
+        };
+    }
+}

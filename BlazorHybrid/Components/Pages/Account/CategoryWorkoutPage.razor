@@ -1,0 +1,189 @@
+@page "/workouts/category/{SelectedCategory}"
+@inject UserState UserState
+@inject NavigationManager NavigationManager
+
+@if (UserState.IsLoggedIn)
+{
+    <Unauthorized />
+}
+else
+{
+    <div class="min-h-screen pb-24 bg-gray-50">
+        <HeaderBannerComponent 
+            Title="@HeaderTitle" 
+            BackgroundColor="@GetCategoryBackground()"
+            HeightClass="h-40">
+            <AdditionalContent>
+                <div class="flex items-center justify-between w-full">
+                    <span class="flex items-center">
+                        <i class="@GetCategoryIcon() mr-2"></i>
+                        @FilteredWorkouts.Count() workouts
+                    </span>
+                    <button 
+                        @onclick="CreateNewWorkout"
+                        class="flex items-center px-4 py-2 space-x-2 text-sm font-medium text-white transition-all duration-200 rounded-full backdrop-blur-lg @GetCategoryButtonClass() hover:bg-opacity-30 active:bg-opacity-40">
+                        <i class="fas fa-plus"></i>
+                        <span>New Workout</span>
+                    </button>
+                </div>
+            </AdditionalContent>
+        </HeaderBannerComponent>
+
+        <!-- Main Content -->
+        <div class="px-4 pt-48 space-y-6">
+            <!-- Filters -->
+            <div class="flex gap-2 pb-2 overflow-x-auto scrollbar-hide">
+                <button 
+                    @onclick="() => SetFilter(null)"
+                    class="@GetFilterButtonClass(null)">
+                    All
+                </button>
+                <button 
+                    @onclick="() => SetFilter(Level.Beginner)"
+                    class="@GetFilterButtonClass(Level.Beginner)">
+                    Beginner
+                </button>
+                <button 
+                    @onclick="() => SetFilter(Level.Intermediate)"
+                    class="@GetFilterButtonClass(Level.Intermediate)">
+                    Intermediate
+                </button>
+                <button 
+                    @onclick="() => SetFilter(Level.Advanced)"
+                    class="@GetFilterButtonClass(Level.Advanced)">
+                    Advanced
+                </button>
+                <button 
+                    @onclick="() => SetFilter(Level.Expert)"
+                    class="@GetFilterButtonClass(Level.Expert)">
+                    Expert
+                </button>
+            </div>
+
+            <!-- Workouts List -->
+            <div class="space-y-3">
+                @if (FilteredWorkouts.Any())
+                {
+                    @foreach (var workout in FilteredWorkouts)
+                    {
+                        <WorkoutComponent 
+                            Name="@workout.Name"
+                            DateCreated="DateTime.Now"
+                            Duration="@((workout.DateCompleted - workout.DateCreated).Minutes)" 
+                            ExerciseCount="@workout.Exercises.Count" 
+                            Category="@workout.Category" />
+                    }
+                }
+                else
+                {
+                    <div class="flex flex-col items-center justify-center py-12 text-center">
+                        <div class="w-16 h-16 mb-4 @GetCategoryBackground() rounded-xl flex items-center justify-center">
+                            <i class="@GetCategoryIcon() text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">No workouts found</h3>
+                        <p class="mt-2 text-sm text-gray-500">Try adjusting your filters or check back later</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string SelectedCategory { get; set; } = string.Empty;
+
+    private Category? EnumCategory => Enum.TryParse<Category>(SelectedCategory, true, out var result) ? result : (Category?)null;
+
+    private string HeaderTitle => $"{EnumCategory?.ToString() ?? "Unknown"} Workouts";
+
+    private Level? currentFilter = null;
+
+    // Hardcoded Data
+    private List<Workout> Workouts = new()
+    {
+        new Workout
+        {
+            Name = "Upper Body Strength",
+            DateCreated = DateTime.UtcNow.AddMinutes(-45),
+            DateCompleted = DateTime.UtcNow,
+            Category = Category.Strength,
+            Level = Level.Advanced,
+            Exercises = new List<Exercise> { new Exercise(), new Exercise(), new Exercise() }
+        },
+        // Add more workouts here
+    };
+
+    private IEnumerable<Workout> FilteredWorkouts => GetFilteredWorkouts();
+
+    private IEnumerable<Workout> GetFilteredWorkouts()
+    {
+        var categoryWorkouts = Workouts.Where(w => w.Category == EnumCategory);
+
+        return currentFilter.HasValue 
+            ? categoryWorkouts.Where(w => w.Level == currentFilter) 
+            : categoryWorkouts;
+    }
+
+    private void CreateNewWorkout()
+    {
+        NavigationManager.NavigateTo($"/workouts/category/{SelectedCategory}/create");
+    }
+
+    private void SetFilter(Level? filter)
+    {
+        currentFilter = filter;
+    }
+
+    private string GetFilterButtonClass(Level? filter)
+    {
+        var baseClass = "px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 whitespace-nowrap ";
+        return currentFilter == filter ? baseClass + $"bg-{GetCategoryButtonColor()}-600 text-white" : baseClass + "bg-white text-gray-600 hover:bg-gray-50";
+    }
+    private string GetCategoryButtonColor()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength  => "purple",
+            Category.Cardio  => "blue",
+            Category.Hypertrophy  => "green",
+            Category.HIIT  => "red",
+            _ => "gray"
+        };
+    }
+    private string GetCategoryButtonClass()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength  => "bg-purple-600 hover:bg-purple-600/30 active:bg-purple-600/40",
+            Category.Cardio  => "bg-blue-600 hover:bg-blue-600/30 active:bg-blue-600/40",
+            Category.Hypertrophy  => "bg-green-600 hover:bg-green-600/30 active:bg-green-600/40",
+            Category.HIIT  => "bg-red-600 hover:bg-red-600/30 active:bg-red-600/40",
+            _ => "bg-gray-600 hover:bg-gray-600/30 active:bg-gray-600/40"
+        };
+    }
+
+    private string GetCategoryBackground()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "bg-purple-100",
+            Category.Cardio => "bg-blue-100",
+            Category.Hypertrophy => "bg-green-100",
+            Category.HIIT => "bg-red-100",
+            _ => "bg-gray-100"
+        };
+    }
+
+    private string GetCategoryIcon()
+    {
+        return EnumCategory switch
+        {
+            Category.Strength => "text-purple-600 fas fa-weight-hanging",
+            Category.Cardio => "text-blue-600 fas fa-heart-pulse",
+            Category.Hypertrophy => "text-green-600 fas fa-dumbbell",
+            Category.HIIT => "text-red-600 fas fa-fire",
+            _ => "text-gray-500 fas fa-question-circle"
+        };
+    }
+}

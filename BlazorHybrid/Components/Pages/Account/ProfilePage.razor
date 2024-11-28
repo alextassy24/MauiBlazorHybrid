@@ -1,0 +1,117 @@
+@page "/profile"
+@inject UserState UserState
+@inject NavigationManager NavigationManager
+
+@if (!UserState.IsLoggedIn)
+{
+    <Unauthorized />
+}
+else
+{
+    <div class="min-h-screen pb-24">
+        <!-- Profile Header -->
+        <div class="relative pb-10 mb-8">
+            <div class="absolute inset-0 bg-gradient-to-b from-purple-600 to-purple-800 h-40 rounded-b-[40px] shadow-lg"></div>
+                <button 
+                    onclick="window.history.back()"
+                    class="absolute z-50 flex items-center justify-center w-10 h-10 transition-all duration-200 top-4 left-4 backdrop-blur-md bg-white/20 rounded-xl hover:bg-white/30 focus:outline-none">
+                    <i class="text-white fas fa-chevron-left"></i>
+                </button>
+
+                <div class="relative px-4 pt-12 text-center">
+                    <div class="relative inline-block">
+                        @{
+                            var profileImage = UserState.LoggedInUser?.Gender switch
+                            {
+                                Gender.Male => "https://cdn-icons-png.flaticon.com/512/4514/4514759.png",
+                                Gender.Female => "https://cdn-icons-png.flaticon.com/512/4514/4514757.png",
+                                _ => "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop" // Default/non-binary
+                            };
+                        }
+                        <img src="@profileImage" 
+                            alt="Profile" 
+                            class="object-cover w-24 h-24 border-4 border-white rounded-full shadow-xl">
+                    </div>
+                    <h1 class="mt-4 text-2xl font-bold text-black">@UserState.LoggedInUser?.FirstName @UserState.LoggedInUser?.LastName</h1>
+                    <p class="text-sm text-gray-600">Fitness Enthusiast</p>
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="p-4 mx-4 mb-6 bg-white shadow-lg rounded-2xl">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-purple-600">156</p>
+                        <p class="text-xs text-gray-600">Workouts</p>
+                    </div>
+                    <div class="text-center border-l border-gray-200">
+                        <p class="text-2xl font-bold text-purple-600">23</p>
+                        <p class="text-xs text-gray-600">Meals</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <div class="mx-4 overflow-hidden bg-white shadow-lg rounded-2xl">
+                <button class="flex items-center justify-between w-full p-4 transition-colors duration-150 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-xl">
+                            <i class="text-purple-600 fas fa-user"></i>
+                        </div>
+                        <span class="text-gray-700">Personal Info</span>
+                    </div>
+                    <i class="text-sm text-gray-400 fas fa-chevron-right"></i>
+                </button>
+
+                <button class="flex items-center justify-between w-full p-4 transition-colors duration-150 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-xl">
+                            <i class="text-purple-600 fas fa-bell"></i>
+                        </div>
+                        <span class="text-gray-700">Notifications</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 text-xs font-medium text-red-600 bg-red-100 rounded-full">3</span>
+                        <i class="text-sm text-gray-400 fas fa-chevron-right"></i>
+                    </div>
+                </button>
+
+                <button class="flex items-center justify-between w-full p-4 transition-colors duration-150 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-xl">
+                            <i class="text-purple-600 fas fa-gear"></i>
+                        </div>
+                        <span class="text-gray-700">Settings</span>
+                    </div>
+                    <i class="text-sm text-gray-400 fas fa-chevron-right"></i>
+                </button>
+
+                <button class="flex items-center justify-between w-full p-4 transition-colors duration-150 hover:bg-gray-50 active:bg-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-xl">
+                            <i class="text-purple-600 fas fa-circle-question"></i>
+                        </div>
+                        <span class="text-gray-700">Help & Support</span>
+                    </div>
+                    <i class="text-sm text-gray-400 fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="px-4 mt-6">
+                <button @onclick="Logout" class="flex items-center justify-center w-full px-6 py-4 space-x-2 font-medium text-white transition-colors duration-200 bg-red-500 shadow-lg hover:bg-red-600 active:bg-red-700 rounded-2xl">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log Out</span>
+                </button>
+            </div>
+    </div>
+
+    @code{
+        private void Logout()
+        {
+            UserState.Logout();
+            UserState.ClearAuthToken();
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+}

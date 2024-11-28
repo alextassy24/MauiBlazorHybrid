@@ -19,15 +19,16 @@ namespace BlazorHybridBackend.Controllers
         UserManager<User> userManager,
         IConfiguration configuration,
         IEmailService emailService,
-        IUserService userService
+        IUserService userService,
+        ITokenService tokenService
     ) : ControllerBase
     {
         private readonly UserManager<User> _userManager = userManager;
         private readonly IConfiguration _configuration = configuration;
         private readonly IEmailService _emailService = emailService;
         private readonly IUserService _userService = userService;
+        private readonly ITokenService _tokenService = tokenService;
 
-        // 1. Register Endpoint
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequest)
         {
@@ -45,30 +46,26 @@ namespace BlazorHybridBackend.Controllers
                 $"Your verification code is: {result.VerificationCode}"
             );
 
-            return Ok(
-                new
-                {
-                    Message = "Registration successful. Check your email for the verification code.",
-                }
-            );
+            return Ok(result);
         }
 
-        // 2. Verify Account Endpoint
         [HttpPost("verify")]
-        public async Task<IActionResult> VerifyAccount([FromBody] VerifyRequestDto verifyRequest)
+        public async Task<IActionResult> VerifyAccount(
+            [FromBody] VerificationRequestDto verifyRequest
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _userService.VerifyAccountAsync(
                 verifyRequest.Email,
-                verifyRequest.VerificationCode
+                verifyRequest.Code
             );
 
             if (!result.IsSuccess)
                 return BadRequest(result.Message);
 
-            return Ok(new { Message = "Account verified successfully." });
+            return Ok(result);
         }
 
         [HttpPost("login")]
@@ -77,22 +74,27 @@ namespace BlazorHybridBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
-                return Unauthorized("Invalid credentials");
+            var user = await _userService.GetUserByEmailAsync(loginRequest.Email);
+            if (user == null)
+                return NotFound();
 
-            var token = GenerateJwtToken(user);
+            if (!await _userService.CheckPasswordAsync(loginRequest.Email, loginRequest.Password))
+                return Unauthorized();
+
+            if(!user.IsVerified)
+                return Forbid();
 
             return Ok(
                 new LoginResponseDto
                 {
-                    Token = token,
+                    Token = _tokenService.GenerateJwtToken(user),
                     User = new UserDto
                     {
                         Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Email = user.Email,
+                        IsTrainer = user.IsTrainer
                     },
                 }
             );
@@ -133,29 +135,6 @@ namespace BlazorHybridBackend.Controllers
                 return BadRequest("Invalid token or email confirmation failed.");
 
             return Ok("Email confirmed successfully.");
-        }
-
-        private string GenerateJwtToken(IdentityUser user)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

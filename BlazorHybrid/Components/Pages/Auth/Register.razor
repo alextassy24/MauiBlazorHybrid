@@ -1,126 +1,138 @@
 @page "/register"
+@inject UserState UserState
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-    <div class="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
-        <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-            <h1 class="text-2xl font-bold text-center text-gray-800">Create Your Account</h1>
-            <p class="mt-2 text-center text-gray-600">Sign up to get started</p>
+<div class="flex items-start justify-center min-h-screen p-5 bg-gradient-to-br from-purple-700 via-indigo-800 to-purple-900">
+    <div class="w-full max-w-xl p-8 border shadow-2xl bg-white/95 backdrop-blur-sm rounded-2xl border-white/20 animate-fade-in">
+        <h1 class="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-800">
+            Create Your Account
+        </h1>
+        <p class="mt-3 text-center text-gray-600">Start your journey with us today</p>
 
-            <EditForm Model="RegisterModel" OnValidSubmit="HandleRegister">
-                <DataAnnotationsValidator />
+        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegister">
+            <DataAnnotationsValidator />
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
+                <div class="p-3 mt-4 border border-red-100 bg-red-50 rounded-xl">
+                    <p class="text-sm text-center text-red-600">@ErrorMessage</p>
+                </div>
             }
-                <div class="mt-10 space-y-4">
-                    <div>
-                        <label for="firstName" class="@LabelClass">First Name</label>
+
+            <div class="mt-8 space-y-6">
+                <!-- First Name and Last Name -->
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="space-y-2">
+                        <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
                         <InputText id="firstName" 
-                            class="@InputClass" 
-                            @bind-Value="RegisterModel.FirstName" />
-                        <ValidationMessage For="@(() => RegisterModel.FirstName)" class="@ErrorClass" />
+                                   class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400 placeholder:text-gray-400"
+                                   @bind-Value="RegisterModel.FirstName" />
+                        <ValidationMessage For="@(() => RegisterModel.FirstName)" class="mt-1 text-sm text-red-500" />
                     </div>
-
-                    <div>
-                        <label for="lastName" class="@LabelClass">Last Name</label>
+                    <div class="space-y-2">
+                        <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
                         <InputText id="lastName" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.LastName" />
-                        <ValidationMessage For="@(() => RegisterModel.LastName)" class="@ErrorClass" />
+                                   class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400 placeholder:text-gray-400"
+                                   @bind-Value="RegisterModel.LastName" />
+                        <ValidationMessage For="@(() => RegisterModel.LastName)" class="mt-1 text-sm text-red-500" />
                     </div>
+                </div>
 
-                    <div>
-                        <label for="email" class="@LabelClass">Email Address</label>
-                        <InputText id="email" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.Email" />
-                        <ValidationMessage For="@(() => RegisterModel.Email)" class="@ErrorClass" />
-                    </div>
+                <!-- Email -->
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <InputText id="email" 
+                               class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400 placeholder:text-gray-400"
+                               @bind-Value="RegisterModel.Email" />
+                    <ValidationMessage For="@(() => RegisterModel.Email)" class="mt-1 text-sm text-red-500" />
+                </div>
 
-                    <div>
-                        <label for="phoneNumber" class="@LabelClass">Phone Number</label>
-                        <InputText id="phoneNumber" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.PhoneNumber" />
-                        <ValidationMessage For="@(() => RegisterModel.PhoneNumber)" class="@ErrorClass" />
-                    </div>
+                <!-- Phone Number -->
+                <div class="space-y-2">
+                    <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <InputText id="phoneNumber" 
+                               class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400 placeholder:text-gray-400"
+                               @bind-Value="RegisterModel.PhoneNumber" />
+                    <ValidationMessage For="@(() => RegisterModel.PhoneNumber)" class="mt-1 text-sm text-red-500" />
+                </div>
 
-                    <div>
-                        <label for="gender" class="@LabelClass">Gender</label>
+                <!-- Gender and Date of Birth -->
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="space-y-2">
+                        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
                         <InputSelect id="gender" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.Gender">
-                            <option value="">Select Gender</option>
+                                     class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+                                     @bind-Value="RegisterModel.Gender">
+                            <option selected disabled>Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </InputSelect>
-                        <ValidationMessage For="@(() => RegisterModel.Gender)" class="@ErrorClass" />
+                        <ValidationMessage For="@(() => RegisterModel.Gender)" class="mt-1 text-sm text-red-500" />
                     </div>
-
-                    <div>
-                        <label for="dateOfBirth" class="@LabelClass">Date of Birth</label>
+                    <div class="space-y-2">
+                        <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
                         <InputDate id="dateOfBirth" 
-                            class="@InputClass" 
-                            @bind-Value="RegisterModel.DateOfBirth" />
-                        <ValidationMessage For="@(() => RegisterModel.DateOfBirth)" class="@ErrorClass" />
+                                   class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+                                   @bind-Value="RegisterModel.DateOfBirth" />
+                        <ValidationMessage For="@(() => RegisterModel.DateOfBirth)" class="mt-1 text-sm text-red-500" />
                     </div>
-
-                    <div>
-                        <label for="password" class="@LabelClass">Password</label>
-                        <InputText id="password" type="password" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.Password" />
-                        <ValidationMessage For="@(() => RegisterModel.Password)" class="@ErrorClass" />
-                    </div>
-
-                    <div>
-                        <label for="confirmPassword" class="@LabelClass">Confirm Password</label>
-                        <InputText id="confirmPassword" type="password" 
-                            class="@InputClass"
-                            @bind-Value="RegisterModel.ConfirmPassword" />
-                        <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" class="@ErrorClass" />
-                    </div>
-
-                    <button type="submit" 
-                        class="w-full py-2 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
-                        Sign Up
-                    </button>
                 </div>
-            </EditForm>
 
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-                        <p class="mt-4 text-sm text-red-500">@ErrorMessage</p>
-        }
+                <!-- Password and Confirm Password -->
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <InputText id="password" type="password" 
+                               class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+                               @bind-Value="RegisterModel.Password" />
+                    <ValidationMessage For="@(() => RegisterModel.Password)" class="mt-1 text-sm text-red-500" />
+                </div>
+                <div class="space-y-2">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <InputText id="confirmPassword" type="password" 
+                               class="w-full px-4 py-3 text-gray-700 transition-all duration-200 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+                               @bind-Value="RegisterModel.ConfirmPassword" />
+                    <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" class="mt-1 text-sm text-red-500" />
+                </div>
 
-            <p class="mt-6 text-center text-gray-600">
-                Already have an account?
-                <a href="/login" class="font-semibold text-indigo-600 hover:underline">Log In</a>
-            </p>
-        </div>
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full py-3.5 px-4 font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600
+                               rounded-xl hover:from-purple-700 hover:to-indigo-700 transform transition-all duration-200
+                               focus:outline-none focus:ring-2 focus:ring-purple-500/20 active:scale-[0.98] shadow-lg
+                               shadow-purple-600/20 hover:shadow-purple-600/40 mt-8">
+                    Create Account
+                </button>
+            </div>
+        </EditForm>
+
+        <!-- Redirect to Login -->
+        <p class="mt-8 text-center text-gray-600">
+            Already have an account?
+            <a href="/login" class="ml-2 font-semibold text-purple-600 transition-colors duration-200 hover:text-purple-700">
+                Log In
+            </a>
+        </p>
     </div>
+</div>
 
 @code {
-    private RegisterRequestDto RegisterModel = new RegisterRequestDto();
+    private RegisterRequestDto RegisterModel = new();
     private string ErrorMessage = string.Empty;
-    private string ErrorClass = "mt-1 text-sm text-red-500";
-    private string LabelClass = "block text-sm font-medium text-gray-700";
-    private string InputClass = "w-full px-4 py-2 mt-1 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-500";
-
     private async Task HandleRegister()
     {
         try
         {
-            var isSuccess = await AuthService.RegisterAsync(RegisterModel);
-            if (isSuccess == null)
+            RegisterModel.DateOfBirth = RegisterModel.DateOfBirth.ToUniversalTime();
+            var responseMessage = await AuthService.RegisterAsync(RegisterModel);
+            if (responseMessage == string.Empty)
             {
-                NavigationManager.NavigateTo("/verify");
+                UserState.SetEmail(RegisterModel.Email);
+                NavigationManager.NavigateTo("/verify", true);
             }
             else
             {
-                ErrorMessage = isSuccess;
+                ErrorMessage = responseMessage;
             }
         }
         catch (Exception ex)

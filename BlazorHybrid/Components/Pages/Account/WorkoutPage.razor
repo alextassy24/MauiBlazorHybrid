@@ -1,0 +1,229 @@
+@page "/workout"
+@inject UserState UserState
+@inject NavigationManager NavigationManager
+
+@if (UserState.IsLoggedIn)
+{
+    <Unauthorized />
+}
+else
+{
+    <div class="min-h-screen pb-24 bg-gray-50">
+        <HeaderBannerComponent 
+            Title="Upper Body Strength" 
+            ImageUrl="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" 
+            HeightClass="h-48">
+            <AdditionalContent>
+                <span class="flex items-center">
+                    <i class="mr-2 fas fa-calendar-days"></i>
+                    25-11-2024
+                </span>
+                <span class="flex items-center">
+                    <i class="mr-2 fas fa-clock"></i>
+                    45 min
+                </span>
+                <span class="flex items-center">
+                    <i class="mr-2 text-yellow-400 fas fa-signal"></i>
+                    <span class="text-yellow-400">Intermediate</span>
+                </span>
+            </AdditionalContent>
+        </HeaderBannerComponent>
+
+
+        <!-- Main Content -->
+        <div class="px-4 pt-56 space-y-6">
+            <!-- Description -->
+            <div class="p-4 bg-white shadow-sm rounded-2xl">
+                <h2 class="mb-2 text-lg font-semibold text-gray-800">About this Workout</h2>
+                <p class="text-gray-600">A comprehensive upper body workout focusing on building strength and muscle definition. Perfect for intermediate fitness enthusiasts looking to challenge themselves.</p>
+            </div>
+
+            <!-- Exercise List -->
+            <div class="pt-4 pb-8 space-y-4">
+                <div class="flex items-center justify-between mb-3 space-x-4">
+                    <h2 class="text-lg font-bold text-gray-800">Exercises</h2>
+                    <button class="px-3 py-2 font-bold text-white bg-purple-700 rounded-full shadow">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    @foreach (var exercise in Exercises)
+                    {
+                        <div class="flex items-center p-4 space-x-4 bg-white shadow-sm rounded-2xl">
+                            <div class="flex items-center justify-center flex-shrink-0 w-16 h-16 bg-@SetIntensity(exercise.Intensity)-100 rounded-xl">
+                                <i class="text-2xl text-@SetIntensity(exercise.Intensity)-600 fas @SetIntensityIcon(exercise.Intensity)"></i>
+                            </div>
+
+                            <div class="flex-grow">
+                                <h3 class="font-semibold text-gray-800">@exercise.Name</h3>
+                                <div class="text-sm text-gray-600">@exercise.MuscleGroup</div>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    <span>@exercise.WorkingSets.Count sets </span>
+                                    <span class="ml-4">@exercise.Intensity</span>
+                                    <span class="ml-4">@GetTotalTime(exercise) min</span>
+                                </div>
+                            </div>
+
+                             <button 
+                                @onclick="() => ToggleExpand(exercise.Id)" 
+                                class="w-10 h-10 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none">
+                                <i class="text-gray-600 fas @(expandedExerciseId == exercise.Id ? "fa-chevron-up" : "fa-chevron-down")"></i>
+                            </button>
+                            
+                        </div>
+
+                        @if (expandedExerciseId == exercise.Id)
+                        {
+                            <div class="p-5 mt-4 space-y-3 bg-white shadow-sm rounded-2xl">
+                                @foreach (var set in exercise.WorkingSets)
+                                {
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                        <div>
+                                            <span class="text-sm text-gray-800">Set @set.Id</span>
+                                        </div>
+                                        <div class="flex space-x-4 text-sm text-gray-500">
+                                            <span>@set.Reps reps</span>
+                                            <span>@set.Weight kg</span>
+                                            <span>@set.RestTime sec</span>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div>Total volume</div>
+                                    <div>@CalculateTotalVolume(exercise.Id) kg</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="pb-8">
+                <button 
+                    class="flex items-center justify-center w-full gap-3 px-4 py-3 font-semibold text-white transition-all duration-200 bg-red-600 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                    <i class="fas fa-trash-can"></i>
+                    <span>Remove</span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private Level level = Level.Beginner;
+    private string LevelClass = string.Empty;
+    protected override void OnInitialized() {
+        SetLevel(level);
+    }
+
+    private void SetLevel(Level level)
+    {
+        LevelClass = level switch
+        {
+            Level.Beginner => "text-gray-300",      
+            Level.Intermediate => "text-yellow-300",
+            Level.Advanced => "text-green-500",    
+            Level.Expert => "text-red-500",        
+            _ => "text-gray-500"                   
+        };
+    }
+
+    private string SetIntensity(Intensity intensity)
+    {
+        return intensity switch
+        {
+            Intensity.Light => "blue",
+            Intensity.Moderate => "purple",
+            Intensity.Heavy => "red",
+            _ => "gray"
+        };
+    }
+    private string SetIntensityIcon(Intensity intensity)
+    {
+        return intensity switch
+        {
+            Intensity.Light => "fa-feather-pointed",
+            Intensity.Moderate => "fa-person-running",
+            Intensity.Heavy => "fa-weight-hanging",
+            _ => "fa-dumbbell"
+        };
+    }
+    private List<Exercise> Exercises = new()
+    {
+        new Exercise
+        {
+            Id = 0,
+            WorkoutId = 1,
+            MuscleGroup = MuscleGroup.Chest,
+            Name = "Push-ups",
+            WorkingSets = new List<WorkingSet>
+            {
+                new WorkingSet { Id = 1, Reps = 12, Weight = 0, RestTime = 60 },
+                new WorkingSet { Id = 2, Reps = 12, Weight = 0, RestTime = 60 },
+                new WorkingSet { Id = 3, Reps = 12, Weight = 0, RestTime = 60 },
+            },
+            RestTime = 60,
+            Intensity = Intensity.Moderate
+        },
+        new Exercise
+        {
+            Id = 1,
+            WorkoutId = 1,
+            MuscleGroup = MuscleGroup.Back,
+            Name = "Dumbbell Rows",
+            WorkingSets = new List<WorkingSet>
+            {
+                new WorkingSet { Id = 1, Reps = 10, Weight = 15, RestTime = 90 },
+                new WorkingSet { Id = 2, Reps = 10, Weight = 15, RestTime = 90 },
+                new WorkingSet { Id = 3, Reps = 10, Weight = 15, RestTime = 90 },
+            },
+            RestTime = 90,
+            Intensity = Intensity.Heavy
+        },
+        new Exercise
+        {
+            Id = 2,
+            WorkoutId = 1,
+            MuscleGroup = MuscleGroup.Shoulders,
+            Name = "Shoulder Press",
+            WorkingSets = new List<WorkingSet>
+            {
+                new WorkingSet { Id = 1, Reps = 8, Weight = 20, RestTime = 90 },
+                new WorkingSet { Id = 2, Reps = 8, Weight = 20, RestTime = 90 },
+                new WorkingSet { Id = 3, Reps = 8, Weight = 20, RestTime = 90 },
+            },
+            RestTime = 90,
+            Intensity = Intensity.Light
+        },
+    };
+
+    private int? expandedExerciseId; // To track which exercise is expanded
+
+    private void ToggleExpand(int exerciseId)
+    {
+        expandedExerciseId = expandedExerciseId == exerciseId ? null : exerciseId;
+    }
+
+    private int GetTotalTime(Exercise exercise)
+    {
+        // Calculate total time in minutes
+        var totalRestTime = exercise.WorkingSets.Sum(set => set.RestTime);
+        var totalDuration = exercise.Duration ?? 0;
+        return (totalRestTime + totalDuration) / 60;
+    }
+
+    private decimal CalculateTotalVolume(int? id)
+    {
+        decimal totalVolume = 0;
+        if(id.HasValue)
+        {
+            foreach (var set in Exercises[id.Value].WorkingSets)
+            {
+                totalVolume += set.Reps * set.Weight;
+            }
+            return totalVolume;
+        }
+        return 0;
+    }
+}

@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+@inject UserState UserState
 
 <div class="flex flex-col min-h-screen bg-gray-100">
     <header class="fixed top-0 z-50 w-full">
@@ -10,7 +11,7 @@
         @Body
     </main>
 
-    @if (!ShouldHideFooter())
+    @if (UserState.IsLoggedIn && !ShouldHideFooter())
     {
         <footer class="fixed bottom-0 z-50 w-full">
             <BottomNavMenu />
@@ -22,7 +23,7 @@
     private bool ShouldHideFooter()
     {
         var currentUri = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
-        var pagesToHideFooter = new[] { "login", "register", "forgot-password" };
+        var pagesToHideFooter = new[] { "login", "register", "forgot-password", "verify" };
         return pagesToHideFooter.Any(page => currentUri.StartsWith(page, StringComparison.OrdinalIgnoreCase));
     }
 }

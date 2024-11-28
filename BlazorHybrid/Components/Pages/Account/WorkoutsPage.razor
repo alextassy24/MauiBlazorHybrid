@@ -1,0 +1,157 @@
+@page "/workouts"
+@inject WorkoutViewModel WorkoutViewModel
+@inject UserState UserState
+@inject NavigationManager NavigationManager
+
+@if (UserState.IsLoggedIn)
+{    
+    <Unauthorized />
+}
+else
+{
+    <div class="min-h-screen pb-24 bg-gray-50">
+        <HeaderBannerComponent 
+            Title="Workouts" 
+            BackgroundColor="bg-purple-400" 
+            HeightClass="h-32" />
+
+        <!-- Main Content -->
+        <div class="px-4 pt-40 space-y-6">
+            <div class="mb-3">
+                <h2 class="text-lg font-bold text-gray-800">Categories</h2>
+            </div>
+            <!-- Categories -->
+            <div class="grid grid-cols-2 gap-4">
+                @foreach (var category in Categories)
+                {
+                    <CategoryComponent 
+                        WorkoutCount="@category.WorkoutCount" 
+                        Category="@category.Category" />
+                }
+            </div>
+
+            <!-- Recent Workouts -->
+            <div class="space-y-3">
+                <div class="mb-3">
+                    <h2 class="text-lg font-bold text-gray-800">Most Recent Workouts</h2>
+                </div>
+                @foreach (var workout in Workouts)
+                {
+                    <WorkoutComponent 
+                        Name="@workout.Name"
+                        Href="/workout"
+                        DateCreated="@DateTime.Now"
+                        Duration="@((workout.DateCompleted - workout.DateCreated).Minutes)" 
+                        ExerciseCount="@workout.Exercises.Count" 
+                        Category="@workout.Category" />
+                }
+            </div>
+        </div> 
+    </div>
+}
+
+@code {
+    private string btnPrimary = "px-2 py-2 rounded-lg shadow text-white font-bold bg-purple-700";
+    private List<CategoryData> Categories = new()
+    {
+        new CategoryData { WorkoutCount = 12, Category = Category.Strength },
+        new CategoryData { WorkoutCount = 6, Category = Category.Hypertrophy },
+        new CategoryData { WorkoutCount = 8, Category = Category.Cardio },
+        new CategoryData { WorkoutCount = 10, Category = Category.HIIT }
+    };
+    private class CategoryData
+    {
+        public int WorkoutCount { get; set; }
+        public Category Category { get; set; }
+    }
+
+    private List<Workout> Workouts = new()
+    {
+        new Workout
+        {
+            Id = 0,
+            Name = "Upper Body Strength",
+            DateCreated = DateTime.UtcNow.AddMinutes(-45),
+            DateCompleted = DateTime.UtcNow,
+            Level = Level.Advanced,
+            Category = Category.Strength,
+            Exercises = new List<Exercise>
+            {
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+            }
+        },
+        new Workout
+        {
+            Id = 1,
+            Name = "Cardio Blast",
+            DateCreated = DateTime.UtcNow.AddMinutes(-30),
+            DateCompleted = DateTime.UtcNow,
+            Level = Level.Intermediate,
+            Category = Category.Cardio,
+            Exercises = new List<Exercise>
+            {
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+            }
+        },
+        new Workout
+        {
+            Id = 2,
+            Name = "Arms Hypertrophy",
+            DateCreated = DateTime.UtcNow.AddMinutes(-60),
+            DateCompleted = DateTime.UtcNow,
+            Level = Level.Advanced,
+            Category = Category.Hypertrophy,
+            Exercises = new List<Exercise>
+            {
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+            }
+        },
+        new Workout
+        {
+            Id = 3,
+            Name = "Late Night HIIT",
+            DateCreated = DateTime.UtcNow.AddMinutes(-30),
+            DateCompleted = DateTime.UtcNow,
+            Level = Level.Expert,
+            Category = Category.HIIT,
+            Exercises = new List<Exercise>
+            {
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+                new Exercise(),
+            }
+        }
+    };
+}

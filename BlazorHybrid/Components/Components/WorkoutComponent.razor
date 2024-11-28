@@ -1,0 +1,74 @@
+<NavLink href="@Href" class="block overflow-hidden transition-transform duration-200 bg-white border border-gray-100 shadow-sm active:scale-98 rounded-2xl hover:border-purple-100">
+    <div class="p-4">
+        <!-- Header with Icon and Title -->
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 @GetCategoryBackgroundColor(Category) rounded-xl">
+                    <i class="@GetCategoryIcon(Category)"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">@Name</h3>
+            </div>
+            <i class="text-gray-400 transition-transform duration-200 fas fa-chevron-right group-hover:translate-x-1"></i>
+        </div>
+
+        <!-- Workout Details -->
+        <div class="flex flex-wrap items-center gap-4 mt-2">
+            <div class="flex items-center text-sm text-gray-500">
+                <i class="mr-2 text-gray-400 fas fa-calendar-alt"></i>
+                <span>@DateCreated.ToShortDateString()</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-500">
+                <i class="mr-2 text-gray-400 fas fa-clock"></i>
+                <span>@Duration mins</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-500">
+                <i class="mr-2 text-gray-400 fas fa-dumbbell"></i>
+                <span>@ExerciseCount exercises</span>
+            </div>
+        </div>
+    </div>
+</NavLink>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public DateTime DateCreated { get; set; } = DateTime.UtcNow.ToLocalTime();
+
+    [Parameter]
+    public int Duration { get; set; }
+
+    [Parameter]
+    public int ExerciseCount { get; set; }
+
+    [Parameter]
+    public Category Category { get; set; }
+
+    [Parameter]
+    public string Href { get; set; } = string.Empty;
+
+    private string GetCategoryIcon(Category category)
+    {
+        return category switch
+        {
+            Category.Strength => "text-purple-600 fas fa-weight-hanging",
+            Category.Cardio => "text-blue-600 fas fa-heart-pulse",
+            Category.Hypertrophy => "text-green-600 fas fa-dumbbell",
+            Category.HIIT => "text-red-600 fas fa-fire",
+            _ => "text-gray-500 fas fa-question-circle"
+        };
+    }
+
+    private string GetCategoryBackgroundColor(Category category)
+    {
+        return category switch
+        {
+            Category.Strength => "bg-purple-100",
+            Category.Cardio => "bg-blue-100",
+            Category.Hypertrophy => "bg-green-100",
+            Category.HIIT => "bg-red-100",
+            _ => "bg-gray-100"
+        };
+    }
+}

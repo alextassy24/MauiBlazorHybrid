@@ -3,22 +3,38 @@ using BlazorHybrid.Shared.Models;
 using BlazorHybridBackend.Interfaces.Repositories;
 using BlazorHybridBackend.Interfaces.Services;
 using BlazorHybridBackend.Models;
+using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Crypto.Generators;
 
 namespace BlazorHybridBackend.Services
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository userRepository, ITokenRepository tokenRepository)
+        : IUserService
     {
-        private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly ITokenRepository _tokenRepository = tokenRepository;
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<bool> CheckPasswordAsync(string email, string password)
+        {
+            var user = await GetUserByEmailAsync(email);
+            if (user == null || user.PasswordHash == null)
+            {
+                return false;
+            }
+
+            var passwordHasher = new PasswordHasher<User>();
+            var verificationResult = passwordHasher.VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                password
+            );
+
+            return verificationResult == PasswordVerificationResult.Success;
         }
 
         public async Task<bool> UpdateUserAsync(User user)
@@ -80,8 +96,6 @@ namespace BlazorHybridBackend.Services
                 };
             }
 
-            var verificationCode = new Random().Next(100000, 999999).ToString();
-
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -89,46 +103,57 @@ namespace BlazorHybridBackend.Services
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 Gender = request.Gender,
-                DateOfBirth = request.DateOfBirth,
+                DateOfBirth = request.DateOfBirth.ToUniversalTime(),
                 IsVerified = false,
             };
 
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+
             await _userRepository.AddAsync(user);
 
-            return new RegisterResponseDto
+            var token = new ActivationToken
             {
-                IsSuccess = true,
-                VerificationCode = verificationCode,
+                UserId = user.Id,
+                Token = new Random().Next(100000, 999999).ToString(),
+                Email = request.Email,
+                CreationDate = DateTime.UtcNow,
+                ExpirationDate = DateTime.UtcNow.AddMinutes(60),
             };
+
+            await _tokenRepository.AddAsync(token, user);
+
+            return new RegisterResponseDto { IsSuccess = true, VerificationCode = token.Token };
         }
 
-        public async Task<VerifyResponseDto> VerifyAccountAsync(
+        public async Task<VerificationResponseDto> VerifyAccountAsync(
             string email,
             string verificationCode
         )
         {
             var user = await _userRepository.GetByEmailAsync(email);
-
             if (user == null)
             {
-                return new VerifyResponseDto { IsSuccess = false, Message = "User not found." };
+                return new VerificationResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User not found.",
+                };
             }
 
             if (user.ActivationToken.Token != verificationCode)
             {
-                return new VerifyResponseDto
+                return new VerificationResponseDto
                 {
                     IsSuccess = false,
                     Message = "Invalid verification code.",
                 };
             }
 
-            // Mark user as verified
             user.IsVerified = true;
-            user.ActivationToken = null; // Clear the verification code
+            user.ActivationToken = null;
             await _userRepository.UpdateAsync(user);
 
-            return new VerifyResponseDto
+            return new VerificationResponseDto
             {
                 IsSuccess = true,
                 Message = "Account verified successfully.",

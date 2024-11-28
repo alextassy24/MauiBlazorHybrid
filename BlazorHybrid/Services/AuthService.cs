@@ -7,14 +7,12 @@ namespace BlazorHybrid.Services
     {
         private readonly IHttpService _httpService = httpService;
         private readonly UserState _userState = userState;
-
         public async Task<string> RegisterAsync(RegisterRequestDto request)
         {
             try
             {
-                Console.WriteLine($"POSTing to: {_httpService.BaseAddress}api/Auth/register");
                 await _httpService.PostAsync("api/Auth/register", request);
-                return null; // No error
+                return string.Empty;
             }
             catch (HttpRequestException httpEx)
             {
@@ -25,6 +23,28 @@ namespace BlazorHybrid.Services
             {
                 // General error fallback
                 return $"An unexpected error occurred: {ex.Message}";
+            }
+        }
+
+        public async Task<(bool IsSuccess, string Message)> VerifyAccountAsync(
+            string email,
+            string code
+        )
+        {
+            try
+            {
+                VerificationResponseDto response = await _httpService.PostAsync<
+                    VerificationRequestDto,
+                    VerificationResponseDto
+                >("api/Auth/verify", new VerificationRequestDto { Email = email, Code = code });
+
+                return response.IsSuccess
+                    ? (true, string.Empty)
+                    : (false, response.Message);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An unexpected error occurred: {ex.Message}");
             }
         }
 

@@ -6,8 +6,22 @@ namespace BlazorHybrid.Shared.DTO
     {
         public UserDto? LoggedInUser { get; private set; }
         public bool IsLoggedIn => LoggedInUser != null;
+        public bool IsTrainer => LoggedInUser?.IsTrainer == true;
+        public string Email { get; private set; } = string.Empty;
         public event Action? OnChange;
         public string AuthToken { get; private set; } = string.Empty;
+
+        public void SetEmail(string email)
+        {
+            Email = email;
+            NotifyStateChanged();
+        }
+
+        public void ClearEmail()
+        {
+            Email = string.Empty;
+            NotifyStateChanged();
+        }
 
         public void SetAuthToken(string token)
         {
@@ -29,7 +43,9 @@ namespace BlazorHybrid.Shared.DTO
 
         public void Logout()
         {
-            LoggedInUser = null; // Explicitly clear the user
+            LoggedInUser = null;
+            AuthToken = string.Empty;
+            Email = string.Empty;
             NotifyStateChanged();
         }
 

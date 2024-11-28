@@ -7,5 +7,6 @@ namespace BlazorHybrid.Interfaces.Services
         Task<string> RegisterAsync(RegisterRequestDto registerRequest);
         Task<(bool IsSuccess, string Message, UserDto? User)> LoginAsync(LoginRequestDto loginRequest);
         Task LogoutAsync();
+        Task<(bool IsSuccess, string Message)> VerifyAccountAsync(string email, string code);
     }
 }

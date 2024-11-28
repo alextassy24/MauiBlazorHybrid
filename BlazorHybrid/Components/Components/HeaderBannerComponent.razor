@@ -1,0 +1,56 @@
+<div class="fixed left-0 right-0 z-40 @TopClass">
+    <div class="relative @HeightClass overflow-hidden">
+        <!-- Back Button -->
+        <button 
+            onclick="window.history.back()" 
+            class="absolute z-10 flex items-center justify-center w-10 h-10 transition-all duration-200 top-4 left-4 backdrop-blur-md bg-white/20 rounded-xl hover:bg-white/30 focus:outline-none">
+            <i class="text-white fas fa-chevron-left"></i>
+        </button>
+
+        <!-- Background (Color or Image) -->
+        @if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            <img src="@ImageUrl" 
+                 alt="Banner Background" 
+                 class="absolute inset-0 object-cover w-full h-full" />
+        }
+        else
+        {
+            <div class="absolute inset-0 object-cover w-full h-full @BackgroundColor"></div>
+        }
+        
+        <!-- Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]">
+            <!-- Content -->
+            <div class="absolute bottom-4 left-4 right-4">
+                <h1 class="mb-2 text-2xl font-bold text-white">@Title</h1>
+                @if (AdditionalContent != null)
+                {
+                    <div class="flex items-center space-x-4 text-white/90">
+                        @AdditionalContent
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? ImageUrl { get; set; } // Optional image URL
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "bg-purple-400"; // Default background color
+
+    [Parameter]
+    public RenderFragment? AdditionalContent { get; set; } // Optional additional content (e.g., metadata)
+
+    [Parameter]
+    public string HeightClass { get; set; } = "h-32"; // Adjustable height
+
+    [Parameter]
+    public string TopClass { get; set; } = "top-16"; // Adjustable position
+}

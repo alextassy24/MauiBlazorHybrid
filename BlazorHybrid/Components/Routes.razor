@@ -4,13 +4,14 @@
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-    <div class="flex flex-col items-center justify-center min-h-screen text-center bg-gradient-to-b from-gray-100 to-gray-300">
-        <h1 class="text-6xl font-extrabold text-gray-800">404</h1>
-        <p class="mt-4 text-xl font-medium text-gray-600">Sorry, the page you're looking for doesn't exist.</p>
-        
-        <NavLink href="/" class="px-6 py-3 mt-6 text-white transition duration-300 ease-in-out bg-indigo-500 rounded-lg shadow-md hover:bg-indigo-600">
-            Go Home
-        </NavLink>
-    </div>
-</NotFound>
+        <div class="flex flex-col items-center justify-center min-h-screen text-center bg-gradient-to-b from-gray-100 to-gray-300">
+            <h1 class="text-6xl font-extrabold text-gray-800">404</h1>
+            <p class="mt-4 text-xl font-medium text-gray-600">
+                Sorry, the page you're looking for doesn't exist.
+            </p>
+            <NavLink href="/" class="px-6 py-3 mt-6 text-white bg-indigo-500 rounded-lg shadow-md hover:bg-indigo-600">
+                Go Home
+            </NavLink>
+        </div>
+    </NotFound>
 </Router>
