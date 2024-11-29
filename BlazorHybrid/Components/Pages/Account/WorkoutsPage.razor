@@ -3,7 +3,7 @@
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 
-@if (UserState.IsLoggedIn)
+@if (!UserState.IsLoggedIn)
 {    
     <Unauthorized />
 }

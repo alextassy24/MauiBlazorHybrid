@@ -1,4 +1,3 @@
-
 namespace BlazorHybrid.Shared.Models.Enums
 {
     public enum Level
@@ -6,6 +5,6 @@ namespace BlazorHybrid.Shared.Models.Enums
         Beginner,
         Intermediate,
         Advanced,
-        Expert
+        Expert,
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace BlazorHybrid.Shared.DTO
 {
@@ -9,6 +10,7 @@ namespace BlazorHybrid.Shared.DTO
         public bool IsTrainer => LoggedInUser?.IsTrainer == true;
         public string Email { get; private set; } = string.Empty;
         public event Action? OnChange;
+        public bool IsModalOpen {get;set;} = false;
         public string AuthToken { get; private set; } = string.Empty;
 
         public void SetEmail(string email)
@@ -50,5 +52,15 @@ namespace BlazorHybrid.Shared.DTO
         }
 
         private void NotifyStateChanged() => OnChange?.Invoke();
+        public void OpenModal()
+        {
+            IsModalOpen = true;
+            NotifyStateChanged();
+        }
+        public void CloseModal()
+        {
+            IsModalOpen = false;
+            NotifyStateChanged();
+        }
     }
 }

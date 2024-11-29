@@ -1,126 +1,151 @@
-@page "/"
+﻿@page "/home3"
+@inject NavigationManager NavigationManager
 
 <div class="flex flex-col items-center justify-center w-full min-h-screen p-8 text-white bg-gradient-to-b from-purple-600 to-indigo-800">
-    <!-- Header -->
-    <header class="text-center">
-        <h1 class="text-5xl font-extrabold tracking-tight">Welcome to Fitness Tracker</h1>
-        <p class="mt-4 text-lg font-medium opacity-90">Your personal journey to a healthier, fitter you starts here!</p>
+    <!-- Header with iOS-style typography -->
+    <header class="mb-12 text-center">
+        <h1 class="text-4xl font-bold tracking-tight">Fitness Tracker</h1>
+        <p class="mt-3 text-lg font-normal text-white/90">Your Health Journey Begins Here</p>
     </header>
 
-    <!-- Main Content -->
-    <div class="w-full max-w-lg p-8 mt-10 text-gray-800 bg-white shadow-2xl rounded-3xl">
-        <h2 class="text-3xl font-semibold text-center text-indigo-600">Let's Get Started</h2>
+    <!-- Main Card - iOS-style glass morphism -->
+    <div class="w-full max-w-lg p-8 shadow-2xl bg-white/90 backdrop-blur-lg rounded-3xl">
+        <h2 class="mb-8 text-2xl font-semibold text-center text-indigo-600">Quick Actions</h2>
 
-        <div class="mt-6 space-y-6 text-center">
-            <p class="text-gray-600">Track your workouts, plan meals, monitor progress, and stay motivated every step of the way.</p>
-            
-            <!-- Action Buttons -->
-            <div class="flex flex-col gap-4">
-                <a href="/workouts" class="flex items-center justify-center w-full gap-3 px-5 py-3 font-semibold text-white transition bg-purple-500 rounded-full shadow hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
-                    <i class="fa-solid fa-dumbbell fa-lg"></i>
-                    <span>View Workouts</span>
-                </a>
-                
-                <a href="/meals" class="flex items-center justify-center w-full gap-3 px-5 py-3 font-semibold text-white transition bg-blue-500 rounded-full shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <i class="fa-solid fa-utensils fa-lg"></i>
-                    <span>Plan Meals</span>
-                </a>
-                
-                <a href="/progress" class="flex items-center justify-center w-full gap-3 px-5 py-3 font-semibold text-white transition bg-green-500 rounded-full shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300">
-                    <i class="fa-solid fa-chart-line fa-lg"></i>
-                    <span>Track Progress</span>
-                </a>
-                
-                <a href="/profile" class="flex items-center justify-center w-full gap-3 px-5 py-3 font-semibold text-white transition bg-gray-700 rounded-full shadow hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                    <i class="fa-solid fa-user fa-lg"></i>
-                    <span>My Profile</span>
-                </a>
-            </div>
+        <!-- iOS-style button grid -->
+        <div class="grid grid-cols-2 gap-4">
+            <button class="flex flex-col items-center p-6 transition-all duration-300 bg-purple-50 rounded-2xl hover:bg-purple-100 group" @onclick="NavigateToWorkouts">
+                <div class="flex items-center justify-center w-12 h-12 mb-3 transition-transform bg-purple-500 shadow-lg rounded-2xl group-hover:scale-110">
+                    <i class="text-xl text-white fas fa-dumbbell"></i>
+                </div>
+                <span class="font-medium text-purple-700">Workouts</span>
+            </button>
+
+            <button class="flex flex-col items-center p-6 transition-all duration-300 bg-blue-50 rounded-2xl hover:bg-blue-100 group" @onclick="NavigateToMeals">
+                <div class="flex items-center justify-center w-12 h-12 mb-3 transition-transform bg-blue-500 shadow-lg rounded-2xl group-hover:scale-110">
+                    <i class="text-xl text-white fas fa-utensils"></i>
+                </div>
+                <span class="font-medium text-blue-700">Meals</span>
+            </button>
+
+            <button class="flex flex-col items-center p-6 transition-all duration-300 bg-green-50 rounded-2xl hover:bg-green-100 group" @onclick="NavigateToProgress">
+                <div class="flex items-center justify-center w-12 h-12 mb-3 transition-transform bg-green-500 shadow-lg rounded-2xl group-hover:scale-110">
+                    <i class="text-xl text-white fas fa-chart-line"></i>
+                </div>
+                <span class="font-medium text-green-700">Progress</span>
+            </button>
+
+            <button class="flex flex-col items-center p-6 transition-all duration-300 bg-gray-50 rounded-2xl hover:bg-gray-100 group" @onclick="NavigateToProfile">
+                <div class="flex items-center justify-center w-12 h-12 mb-3 transition-transform bg-gray-700 shadow-lg rounded-2xl group-hover:scale-110">
+                    <i class="text-xl text-white fas fa-user"></i>
+                </div>
+                <span class="font-medium text-gray-700">Profile</span>
+            </button>
         </div>
     </div>
 
-    <!-- Features Section -->
-    <section class="w-full max-w-4xl mt-16 text-center">
-        <h3 class="text-3xl font-semibold text-indigo-200">Why Choose Fitness Tracker?</h3>
-        <p class="mt-4 text-lg text-indigo-100 opacity-90">
-            Fitness Tracker offers everything you need to reach your fitness goals. With features designed to help you manage workouts, nutrition, and progress,
-            you’ll have all the tools to stay on track and motivated.
-        </p>
+    <!-- Features Section - iOS-style cards -->
+    <section class="w-full max-w-4xl mt-12 space-y-8">
+        <h3 class="text-2xl font-semibold text-center text-white/90">Features</h3>
 
-        <div class="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div class="p-6 bg-white shadow-xl rounded-3xl">
-                <i class="text-4xl text-blue-500 fa-solid fa-apple-alt"></i>
-                <h4 class="mt-4 text-xl font-semibold text-gray-800">Personalized Meal Plans</h4>
-                <p class="mt-2 text-gray-600">Create custom meal plans that fit your dietary needs and preferences.</p>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <!-- Meal Planning -->
+            <div class="p-6 border bg-white/10 backdrop-blur-lg rounded-3xl border-white/20">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center justify-center w-20 bg-purple-500 shadow-lg h-14 rounded-2xl">
+                        <i class="text-xl text-white fas fa-apple-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-white">Meal Planning</h4>
+                        <p class="mt-1 text-sm text-white/80">Customize your nutrition plan with smart recommendations</p>
+                    </div>
+                </div>
             </div>
-            <div class="p-6 bg-white shadow-xl rounded-3xl">
-                <i class="text-4xl text-green-500 fa-solid fa-trophy"></i>
-                <h4 class="mt-4 text-xl font-semibold text-gray-800">Progress Tracking</h4>
-                <p class="mt-2 text-gray-600">Monitor your improvements, stay motivated, and celebrate your achievements.</p>
+
+            <!-- Workout and Exercise Tracking -->
+            <div class="p-6 border bg-white/10 backdrop-blur-lg rounded-3xl border-white/20">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center justify-center w-20 bg-blue-500 shadow-lg h-14 rounded-2xl">
+                        <i class="text-xl text-white fas fa-dumbbell"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-white">Workout Tracking</h4>
+                        <p class="mt-1 text-sm text-white/80">Track your workouts and exercises in real time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracking -->
+            <div class="p-6 border bg-white/10 backdrop-blur-lg rounded-3xl border-white/20">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center justify-center w-20 bg-green-500 shadow-lg h-14 rounded-2xl">
+                        <i class="text-xl text-white fas fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-white">Progress Tracking</h4>
+                        <p class="mt-1 text-sm text-white/80">Monitor your fitness journey with detailed analytics</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Compact Horizontal Cards -->
-    <section class="w-full max-w-4xl pb-20 mt-12 space-y-4">
+    <!-- List-Style with Dividers -->
+    <section class="w-full max-w-4xl mt-12 space-y-4">
         <h3 class="text-2xl font-semibold text-center text-white/90">Your Stats</h3>
         
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="border divide-y bg-white/10 backdrop-blur-lg rounded-3xl border-white/20 divide-white/20">
             <!-- Streak Days -->
-            <div class="flex items-center p-4 bg-white border backdrop-blur-lg rounded-3xl border-white/20">
+            <div class="flex items-center p-4">
                 <div class="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full shadow-lg">
                     <i class="text-xl text-white fas fa-fire"></i>
                 </div>
                 <div class="ml-4">
-                    <h4 class="text-lg font-semibold text-black">Streak Days</h4>
-                    <p class="mt-1 text-sm text-gray-600">7 days</p>
+                    <h4 class="text-lg font-semibold text-white">Streak Days</h4>
+                    <p class="mt-1 text-sm text-white/80">7 days</p>
                 </div>
             </div>
 
             <!-- Last Weight Registered -->
-            <div class="flex items-center p-4 bg-white border backdrop-blur-lg rounded-3xl border-white/20">
+            <div class="flex items-center p-4">
                 <div class="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full shadow-lg">
                     <i class="text-xl text-white fas fa-weight"></i>
                 </div>
                 <div class="ml-4">
-                    <h4 class="text-lg font-semibold text-black">Last Weight</h4>
-                    <p class="mt-1 text-sm text-gray-600">70 kg (2 days ago)</p>
+                    <h4 class="text-lg font-semibold text-white">Last Weight</h4>
+                    <p class="mt-1 text-sm text-white/80">70 kg (2 days ago)</p>
                 </div>
             </div>
 
             <!-- Last Workout Logged -->
-            <div class="flex items-center p-4 bg-white border backdrop-blur-lg rounded-3xl border-white/20">
+            <div class="flex items-center p-4">
                 <div class="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full shadow-lg">
                     <i class="text-xl text-white fas fa-dumbbell"></i>
                 </div>
                 <div class="ml-4">
-                    <h4 class="text-lg font-semibold text-black">Last Workout</h4>
-                    <p class="mt-1 text-sm text-gray-600">Chest & Triceps (Yesterday)</p>
+                    <h4 class="text-lg font-semibold text-white">Last Workout</h4>
+                    <p class="mt-1 text-sm text-white/80">Chest & Triceps (Yesterday)</p>
                 </div>
             </div>
 
             <!-- Calories Remaining -->
-            <div class="flex items-center p-4 bg-white border backdrop-blur-lg rounded-3xl border-white/20">
+            <div class="flex items-center p-4">
                 <div class="flex items-center justify-center w-12 h-12 bg-orange-500 rounded-full shadow-lg">
-                    <i class="text-xl text-black fas fa-chart-pie"></i>
+                    <i class="text-xl text-white fas fa-chart-pie"></i>
                 </div>
                 <div class="ml-4">
-                    <h4 class="text-lg font-semibold text-black">Calories Remaining</h4>
-                    <p class="mt-1 text-sm text-gray-600">650 kcal</p>
+                    <h4 class="text-lg font-semibold text-white">Calories Remaining</h4>
+                    <p class="mt-1 text-sm text-white/80">650 kcal</p>
                 </div>
             </div>
         </div>
     </section>
+
 </div>
 
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        overflow-x: hidden;
-    }
-    h1, h2, h3, h4 {
-        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-    }
-</style>
+@code {
+    private void NavigateToWorkouts() => NavigationManager.NavigateTo("/workouts");
+    private void NavigateToMeals() => NavigationManager.NavigateTo("/meals");
+    private void NavigateToProgress() => NavigationManager.NavigateTo("/progress");
+    private void NavigateToProfile() => NavigationManager.NavigateTo("/profile");
+}

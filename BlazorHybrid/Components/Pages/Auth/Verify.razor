@@ -3,65 +3,70 @@
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
 
-<div class="flex items-center justify-center h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
-    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-800">
-            Account Verification
-        </h1>
-        <p class="mt-3 text-center text-gray-600">Enter the 6-digit verification code sent to your email.</p>
+<div class="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-purple-600 to-indigo-800">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-2xl">
+        <div class="space-y-3 text-center">
+            <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-800">
+                Verify Your Account
+            </h1>
+            <p class="text-gray-600">
+                Enter the 6-digit verification code sent to
+                <span class="font-medium text-gray-800">@(UserState.Email)</span>
+            </p>
+        </div>
 
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            <p class="mt-4 text-sm text-center text-red-500">@ErrorMessage</p>
+            <div class="p-4 text-sm text-red-600 bg-red-50 rounded-xl">
+                <p class="flex items-center">
+                    <i class="mr-2 fas fa-exclamation-circle"></i>
+                    @ErrorMessage
+                </p>
+            </div>
         }
 
-        <EditForm OnValidSubmit="HandleVerification" class="mt-10">
+        <EditForm Model="@this" OnValidSubmit="HandleVerification" class="space-y-6">
             <DataAnnotationsValidator />
 
-            <div class="flex justify-center space-x-2">
-                @for (int i = 0; i < 6; i++)
-                {
-                    <input @ref="@InputReferences[i]"
-                           type="text" maxlength="1" 
-                           @bind="CodeInputs[i]" 
-                           @bind:event="oninput"
-                           @onkeydown="@(e => HandleKeyDown(e, i))"
-                           class="w-10 h-12 text-xl text-center text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                }
+            <VerificationInput @bind-Code="VerificationCode" />
+
+            <div class="space-y-4">
+                <button type="submit"
+                        disabled="@(!IsValidCode())"
+                        class="w-full py-3 font-semibold text-white transition-all duration-200 bg-purple-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2">
+                    Verify Account
+                </button>
+
+                @* <button type="button"
+                        @onclick="ResendCode"
+                        class="w-full py-3 font-semibold text-purple-600 transition-all duration-200 rounded-lg bg-purple-50 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2">
+                    Resend Code
+                </button> *@
             </div>
-
-            <ValidationMessage For="@(() => VerificationCode)" class="mt-4 text-sm text-center text-red-500" />
-
-            <button type="submit"
-                    class="w-full py-3 mt-6 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
-                Verify
-            </button>
         </EditForm>
+
+        <div class="text-center">
+            <button @onclick="GoBack" 
+                    class="text-sm text-gray-600 transition-colors duration-200 hover:text-purple-600">
+                ← Back to Login
+            </button>
+        </div>
     </div>
 </div>
 
 @code {
-    private string[] CodeInputs = new string[6];
-    private ElementReference[] InputReferences = new ElementReference[6];
-    private string VerificationCode => string.Join("", CodeInputs);
+    private string VerificationCode { get; set; } = string.Empty;
     private string ErrorMessage = string.Empty;
 
-    protected override void OnInitialized()
-    {
-        // Initialize with empty values
-        for (int i = 0; i < CodeInputs.Length; i++)
-        {
-            CodeInputs[i] = string.Empty;
-        }
-    }
+    private bool IsValidCode() => VerificationCode.Length == 6 && VerificationCode.All(char.IsDigit);
 
     private async Task HandleVerification()
     {
         try
         {
-            if (VerificationCode.Length != 6 || CodeInputs.Any(string.IsNullOrEmpty))
+            if (!IsValidCode())
             {
-                ErrorMessage = "Please fill all the fields correctly.";
+                ErrorMessage = "Please enter a valid 6-digit code.";
                 return;
             }
 
@@ -69,7 +74,7 @@
             if (result.IsSuccess)
             {
                 UserState.ClearEmail();
-                NavigationManager.NavigateTo("/dashboard", true);
+                NavigationManager.NavigateTo("/login", true);
             }
             else
             {
@@ -78,23 +83,34 @@
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Unexpected error: {ex.Message}";
+            ErrorMessage = "An unexpected error occurred. Please try again.";
         }
     }
 
-    private async Task HandleKeyDown(KeyboardEventArgs e, int index)
+    @* private async Task ResendCode()
     {
-        if (e.Key == "Backspace" && string.IsNullOrEmpty(CodeInputs[index]) && index > 0)
+        try
         {
-            await InputReferences[index - 1].FocusAsync();
+            var result = await AuthService.ResendVerificationCodeAsync(UserState.Email);
+            if (result.IsSuccess)
+            {
+                ErrorMessage = string.Empty;
+                VerificationCode = string.Empty;
+                StateHasChanged();
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
         }
-    }
+        catch
+        {
+            ErrorMessage = "Failed to resend verification code. Please try again.";
+        }
+    } *@
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void GoBack()
     {
-        if (firstRender)
-        {
-            await InputReferences[0].FocusAsync();
-        }
+        NavigationManager.NavigateTo("/login");
     }
 }

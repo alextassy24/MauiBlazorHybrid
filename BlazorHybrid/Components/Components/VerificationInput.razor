@@ -1,0 +1,82 @@
+ß@inject IJSRuntime JSRuntime
+
+<div class="flex justify-center space-x-2">
+    @for (int i = 0; i < 6; i++)
+    {
+        var index = i;
+            <input @ref="InputRefs[index]"
+                   type="text"
+                   inputmode="numeric"
+                   maxlength="1"
+                   value="@Digits[index]"
+                   @oninput="@(e => OnDigitInput(e, index))"
+                   @onkeydown="@(e => OnKeyDown(e, index))"
+                   class="w-12 text-2xl font-semibold text-center text-gray-800 transition-all duration-200 border-2 border-gray-200 rounded-lg h-14 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Code { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> CodeChanged { get; set; }
+    private string[] Digits = new string[6];
+    private ElementReference[] InputRefs = new ElementReference[6];
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            Digits[i] = i < Code.Length ? Code[i].ToString() : "";
+        }
+    }
+
+    private async Task OnDigitInput(ChangeEventArgs e, int index)
+    {
+        var value = e.Value?.ToString() ?? "";
+
+        // Ensure only numbers
+        if (!string.IsNullOrEmpty(value) && !char.IsDigit(value[0]))
+        {
+            Digits[index] = "";
+            await UpdateCode();
+            return;
+        }
+
+        Digits[index] = value;
+        await UpdateCode();
+
+        // Auto-focus next input if available
+        if (!string.IsNullOrEmpty(value) && index < 5)
+        {
+            await InputRefs[index + 1].FocusAsync();
+        }
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e, int index)
+    {
+        if (e.Key == "Backspace" && string.IsNullOrEmpty(Digits[index]) && index > 0)
+        {
+            // Focus previous input on backspace if current is empty
+            await InputRefs[index - 1].FocusAsync();
+        }
+        else if (e.Key == "ArrowLeft" && index > 0)
+        {
+            await InputRefs[index - 1].FocusAsync();
+        }
+        else if (e.Key == "ArrowRight" && index < 5)
+        {
+            await InputRefs[index + 1].FocusAsync();
+        }
+    }
+
+    private async Task UpdateCode()
+    {
+        var newCode = string.Join("", Digits);
+        if (newCode != Code)
+        {
+            await CodeChanged.InvokeAsync(newCode);
+        }
+    }
+}

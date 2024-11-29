@@ -2,7 +2,7 @@
 @inject UserState UserState
 @inject NavigationManager NavigationManager
 
-@if (UserState.IsLoggedIn)
+@if (!UserState.IsLoggedIn)
 {
     <Unauthorized />
 }
@@ -15,9 +15,10 @@ else
             HeightClass="h-40">
             <AdditionalContent>
                 <div class="flex items-center justify-between w-full">
-                    <span class="flex items-center">
+                    <span class="flex items-center px-3 py-2 bg-white rounded-full">
                         <i class="@GetCategoryIcon() mr-2"></i>
-                        @FilteredWorkouts.Count() workouts
+                        <span class="text-@GetCategoryButtonColor()-600">@FilteredWorkouts.Count() @(FilteredWorkouts.Count() == 1? "workout" : "workouts")</span>
+                        
                     </span>
                     <button 
                         @onclick="CreateNewWorkout"

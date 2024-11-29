@@ -4,53 +4,241 @@
 
 @if (!UserState.IsLoggedIn)
 {
-            <Unauthorized />
+    <Unauthorized />
 }
 else
 {
-    <div class="p-5">
-        <button 
-            onclick="window.history.back()" 
-            class="absolute flex items-center justify-center w-10 h-10 text-white transition-all duration-200 bg-purple-600 rounded-full shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-extrabold text-start">Your Meals</h1>
-            <button class="flex items-center gap-2 @btnPrimary p-4"
-                    @onclick="MealsViewModel.AddMeal">
-                <i class="fa-solid fa-plus"></i>
-                <span class="hidden md:inline-block">Add Meal</span>
-            </button>
-        </div>
+    <div class="min-h-screen pb-24 bg-gray-50">
+        <HeaderBannerComponent 
+            Title="Your Meals" 
+            ImageUrl="https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80"
+            HeightClass="h-48">
+            <AdditionalContent>
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center space-x-4">
+                        <span class="flex items-center">
+                            <i class="mr-2 fas fa-utensils"></i>
+                            @(MealsViewModel.Meals?.Count() ?? 0) meals
+                        </span>
+                        <span class="flex items-center">
+                            <i class="mr-2 fas fa-calendar-alt"></i>
+                            Today
+                        </span>
+                    </div>
+                    <button 
+                        @onclick="() => OpenModal()"
+                        class="flex items-center px-4 py-2 space-x-2 text-sm font-medium transition-colors duration-200 rounded-full backdrop-blur-md bg-white/20 hover:bg-white/30">
+                        <i class="fas fa-sliders"></i>
+                        <span>Customize</span>
+                    </button>
+                </div>
+            </AdditionalContent>
+        </HeaderBannerComponent>
 
-        @if (MealsViewModel.Meals?.Any() == true)
-            {
-                    <ul class="space-y-4">
-                    @foreach (var meal in MealsViewModel.Meals)
-                    {
-                                <li id="meal-@meal.Id" class="relative overflow-hidden bg-gray-100 rounded-lg shadow-md" @onclick="() => MealsViewModel.ViewMeal(meal.Id)">
-                                    <div id="content-@meal.Id" class="flex items-center justify-between p-4 transition-transform duration-300 bg-gray-100">
-                                        <div>
-                                            <p class="font-bold">@meal.Name</p>
-                                            <p class="text-gray-600">@meal.Description</p>
+        <!-- Main Content -->
+        <div class="px-4 pt-56 pb-10 space-y-6">
+            <!-- Date Navigation -->
+            <div class="flex items-center justify-between p-4 bg-white shadow-sm rounded-2xl">
+                <button class="p-2 text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="text-center">
+                    <p class="text-sm text-gray-500">@DateTime.Now.ToString("dddd")</p>
+                    <p class="text-lg font-semibold">@DateTime.Now.ToString("MMMM d, yyyy")</p>
+                </div>
+                <button class="p-2 text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="text-lg font-bold text-gray-800">Remaining</h2>
+            </div>
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-4 gap-3">
+                <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
+                    <p class="text-xl font-bold text-green-600">1,850</p>
+                    <p class="text-xs text-gray-600">Calories</p>
+                </div>
+                <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
+                    <p class="text-xl font-bold text-red-600">145g</p>
+                    <p class="text-xs text-gray-600">Protein</p>
+                </div>
+                <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
+                    <p class="text-xl font-bold text-blue-600">300g</p>
+                    <p class="text-xs text-gray-600">Carbs</p>
+                </div>
+                <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
+                    <p class="text-xl font-bold text-yellow-600">70g</p>
+                    <p class="text-xs text-gray-600">Fats</p>
+                </div>
+            </div>
+
+            <!-- Meal Categories -->
+            <div class="space-y-6">
+                @foreach (var category in CurrentMealPlan)
+                {
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-bold text-gray-800">@category</h2>
+                            <button 
+                                @onclick="MealsViewModel.AddMeal"
+                                class="flex items-center px-4 py-2 space-x-2 text-sm font-medium text-white transition-colors duration-200 bg-green-600 rounded-full hover:bg-green-700 active:bg-green-800">
+                                <i class="fas fa-plus"></i>
+                                <span>Add @category</span>
+                            </button>
+                        </div>
+
+                        @{
+                            var categoryMeals = MealsViewModel.Meals?.Where(m => m.Category == category);
+                        }
+
+                        @if (categoryMeals?.Any() == true)
+                        {
+                            @foreach (var meal in categoryMeals)
+                            {
+                                <div class="overflow-hidden transition-all duration-200 bg-white shadow hover:shadow-lg rounded-2xl">
+                                    <div class="flex items-center justify-between p-4">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl">
+                                                <i class="text-xl text-green-600 fas fa-utensils"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-semibold text-gray-800">@meal.Name</h3>
+                                                <p class="text-sm text-gray-500">@meal.Description</p>
+                                            </div>
                                         </div>
-                                        <button class="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                                                @onclick="() => MealsViewModel.EditMeal(meal.Id)">
-                                            <i class="fa-solid fa-pen"></i> 
-                                            <span class="hidden md:inline-block">Edit</span>
-                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <button 
+                                                @onclick="() => MealsViewModel.ViewMeal(meal.Id)"
+                                                class="p-2 text-gray-400 transition-colors duration-200 rounded-xl hover:bg-gray-100">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </li>
-                    }
-                    </ul>
-            }
-            else
-            {
-                    <p class="p-3 font-bold text-center text-red-600 bg-red-300 rounded-lg shadow">No meals found.</p>
-            }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="flex flex-col items-center justify-center py-6 text-center shadow bg-white/50 rounded-2xl">
+                                <p class="text-sm text-gray-500">No meals added for @category</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
     </div>
-}
-@code {
-    string btnPrimary = "px-2 py-2 rounded-lg shadow text-white font-bold bg-purple-700";
 
+    @if (showMealSettings)
+    {
+        <ModalComponent Title="Customize Meal Plan" IsOpen="@showMealSettings" OnClose="CloseModal">
+            <ChildContent>
+                <div class="space-y-4">
+                    <h3 class="mb-2 text-sm font-medium text-gray-700">Preset Plans</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button 
+                            @onclick="() => SetMealPlan(BasicPlan)"
+                            class="p-3 text-sm text-left transition-colors duration-200 bg-gray-100 rounded-xl hover:bg-gray-200">
+                            Basic (3 Meals)
+                        </button>
+                        <button 
+                            @onclick="() => SetMealPlan(ExtendedPlan)"
+                            class="p-3 text-sm text-left transition-colors duration-200 bg-gray-100 rounded-xl hover:bg-gray-200">
+                            Extended (5 Meals)
+                        </button>
+                    </div>
+
+                    <h3 class="mb-2 text-sm font-medium text-gray-700">Custom Plan</h3>
+                    <div class="space-y-2">
+                        @foreach (var category in TempMealPlan)
+                        {
+                            <div class="flex items-center justify-between p-3 bg-gray-100 rounded-xl">
+                                <span>@category</span>
+                                <button 
+                                    @onclick="() => RemoveCategory(category)"
+                                    class="p-1 text-red-500 hover:text-red-600">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="flex mt-2">
+                        <input 
+                            type="text" 
+                            @bind="newCategory"
+                            placeholder="New category name"
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-green-500" />
+                        <button 
+                            @onclick="AddCategory"
+                            class="px-4 py-2 text-white bg-green-600 rounded-r-xl hover:bg-green-700">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </ChildContent>
+
+            <FooterContent>
+                <button 
+                    @onclick="CloseModal"
+                    class="px-4 py-2 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200">
+                    Cancel
+                </button>
+                <button 
+                    @onclick="SaveMealSettings"
+                    class="px-4 py-2 text-white bg-green-600 rounded-xl hover:bg-green-700">
+                    Save Changes
+                </button>
+            </FooterContent>
+        </ModalComponent>
+    }
+}
+
+@code {
+    private bool showMealSettings = false;
+    private string newCategory = "";
+    private List<string> BasicPlan = new() { "Breakfast", "Lunch", "Dinner" };
+    private List<string> ExtendedPlan = new() { "Breakfast", "Morning Snack", "Lunch", "Afternoon Snack", "Dinner" };
+    private List<string> CurrentMealPlan = new() { "Breakfast", "Lunch", "Dinner" };
+    private List<string> TempMealPlan = new();
+
+    private void OpenModal()
+    {
+        UserState.OpenModal();
+        showMealSettings = true;
+        TempMealPlan = new List<string>(CurrentMealPlan);
+    }
+
+    private void CloseModal()
+    {
+        UserState.CloseModal();
+        showMealSettings = false;
+    }
+
+    private void SetMealPlan(List<string> plan)
+    {
+        TempMealPlan = new List<string>(plan);
+    }
+
+    private void AddCategory()
+    {
+        if (!string.IsNullOrWhiteSpace(newCategory) && !TempMealPlan.Contains(newCategory))
+        {
+            TempMealPlan.Add(newCategory);
+            newCategory = "";
+        }
+    }
+
+    private void RemoveCategory(string category)
+    {
+        TempMealPlan.Remove(category);
+    }
+
+    private void SaveMealSettings()
+    {
+        CurrentMealPlan = new List<string>(TempMealPlan); 
+        CloseModal();
+    }
 }

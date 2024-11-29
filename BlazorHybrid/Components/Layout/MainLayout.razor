@@ -22,8 +22,28 @@
 @code {
     private bool ShouldHideFooter()
     {
+        // Check if the modal is open
+        if (UserState.IsModalOpen)
+        {
+            return true;
+        }
+
+        // Check if the current page is in the list of pages where the footer should be hidden
         var currentUri = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
         var pagesToHideFooter = new[] { "login", "register", "forgot-password", "verify" };
         return pagesToHideFooter.Any(page => currentUri.StartsWith(page, StringComparison.OrdinalIgnoreCase));
     }
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to UserState changes
+        UserState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from UserState changes
+        UserState.OnChange -= StateHasChanged;
+    }
+
 }

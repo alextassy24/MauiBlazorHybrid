@@ -105,6 +105,7 @@ namespace BlazorHybridBackend.Services
                 Gender = request.Gender,
                 DateOfBirth = request.DateOfBirth.ToUniversalTime(),
                 IsVerified = false,
+                MealCategories = []
             };
 
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);

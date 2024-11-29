@@ -1,37 +1,22 @@
 ﻿@inject NavigationManager NavigationManager
 
 <div class="fixed z-50 bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md backdrop-blur-xl bg-white/90 dark:bg-gray-800/90 border border-white/20 rounded-2xl shadow-lg">
-    <div class="grid items-center h-16 grid-cols-5 mx-auto">
-        <NavLink href="/workouts" 
-                 class="@((IsActive("workouts") ? "text-purple-600 after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-purple-600 after:rounded-full" : "text-gray-600") + " relative inline-flex flex-col items-center justify-center group transition-all duration-200")">
-            <i class="w-5 h-5 mb-1 transition-colors duration-200 fa-solid fa-dumbbell group-hover:text-purple-500"></i>
-            <span class="text-[10px] font-medium transition-colors duration-200 group-hover:text-purple-500">Workouts</span>
-        </NavLink>
-        
-        <NavLink href="/meals" 
-                 class="@((IsActive("meals") ? "text-purple-600 after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-purple-600 after:rounded-full" : "text-gray-600") + " relative inline-flex flex-col items-center justify-center group transition-all duration-200")">
-            <i class="w-5 h-5 mb-1 transition-colors duration-200 fa-solid fa-utensils group-hover:text-purple-500"></i>
-            <span class="text-[10px] font-medium transition-colors duration-200 group-hover:text-purple-500">Meals</span>
-        </NavLink>
-        
-        <div class="flex items-center justify-center">
+    <div class="grid items-center h-16 grid-cols-4 mx-auto divide-x-2 divide-gray-300">
+        @foreach (var (index, navItem) in NavItems.Select((value, i) => (i, value)))
+        {
+            <NavLink href="@navItem.Href" 
+                     class="@((IsActive(navItem.Route) ? "text-purple-600 after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-purple-600 after:rounded-full" : "text-gray-600") + " relative inline-flex flex-col items-center justify-center group transition-all duration-200")">
+                <i class="w-5 h-5 mb-1 transition-colors duration-200 @navItem.IconClass group-hover:text-purple-500"></i>
+                <span class="text-[10px] font-medium transition-colors duration-200 group-hover:text-purple-500">@navItem.Label</span>
+            </NavLink>
+        }
+
+        @* <div class="flex items-center justify-center">
             <button type="button" 
                     class="inline-flex items-center justify-center w-12 h-12 transition-all duration-200 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 group focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2">
                 <i class="text-xl text-white transition-transform duration-200 fa-solid fa-plus group-hover:scale-110"></i>
             </button>
-        </div>
-        
-        <NavLink href="/progress" 
-                 class="@((IsActive("progress") ? "text-purple-600 after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-purple-600 after:rounded-full" : "text-gray-600") + " relative inline-flex flex-col items-center justify-center group transition-all duration-200")">
-            <i class="w-5 h-5 mb-1 transition-colors duration-200 fa-solid fa-chart-line group-hover:text-purple-500"></i>
-            <span class="text-[10px] font-medium transition-colors duration-200 group-hover:text-purple-500">Progress</span>
-        </NavLink>
-        
-        <NavLink href="/profile" 
-                 class="@((IsActive("profile") ? "text-purple-600 after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-purple-600 after:rounded-full" : "text-gray-600") + " relative inline-flex flex-col items-center justify-center group transition-all duration-200")">
-            <i class="w-5 h-5 mb-1 transition-colors duration-200 fa-solid fa-user group-hover:text-purple-500"></i>
-            <span class="text-[10px] font-medium transition-colors duration-200 group-hover:text-purple-500">Profile</span>
-        </NavLink>
+        </div> *@
     </div>
 </div>
 
@@ -40,5 +25,21 @@
     {
         var currentRoute = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
         return currentRoute.StartsWith(route, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private List<NavItem> NavItems = new()
+    {
+        new NavItem { Href = "/workouts", Route = "workouts", IconClass = "fa-solid fa-dumbbell", Label = "Workouts" },
+        new NavItem { Href = "/meals", Route = "meals", IconClass = "fa-solid fa-utensils", Label = "Meals" },
+        new NavItem { Href = "/progress", Route = "progress", IconClass = "fa-solid fa-chart-line", Label = "Progress" },
+        new NavItem { Href = "/profile", Route = "profile", IconClass = "fa-solid fa-user", Label = "Profile" }
+    };
+
+    private class NavItem
+    {
+        public string Href { get; set; } = string.Empty;
+        public string Route { get; set; } = string.Empty;
+        public string IconClass { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
     }
 }

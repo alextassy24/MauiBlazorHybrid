@@ -28,5 +28,7 @@ namespace BlazorHybrid.Shared.DTO
         public List<Guid> ClientIds { get; set; } = []; // List of client IDs if the user is a trainer
         public List<Workout> Workouts { get; set; } = []; // Workouts associated with the user
         public List<Meal> Meals { get; set; } = []; // Meals associated with the user
+        public List<Weight> Weights { get; set; } = [];
+
     }
 }

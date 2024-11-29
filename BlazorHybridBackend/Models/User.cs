@@ -12,7 +12,6 @@ namespace BlazorHybridBackend.Models
         public DateTime DateOfBirth { get; set; }
         public Gender Gender { get; set; }
         public int Height { get; set; } = 0;
-        public List<Weight> Weights { get; set; } = [];
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
@@ -29,5 +28,7 @@ namespace BlazorHybridBackend.Models
         public List<Workout> Workouts { get; set; } = [];
         public List<Meal> Meals { get; set; } = [];
         public List<Guid> ClientIds { get; set; } = [];
+        public List<Weight> Weights { get; set; } = [];
+        public List<string> MealCategories { get; set; } = ["Breakfast", "Lunch", "Dinner"];
     }
 }
