@@ -4,6 +4,6 @@ namespace BlazorHybrid.Interfaces.Repos
 {
     public interface IMealRepository : IRepository<Meal>
     {
-        List<Meal> GetMealsByUserId(Guid userId);
+        List<Meal> GetMealsByUserId(string userId);
     }
 }

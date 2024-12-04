@@ -2,8 +2,8 @@ namespace BlazorHybrid.Shared.Models.Enums
 {
     public enum UnitMeasure
     {
-        Kilograms,
         Grams,
+        Kilograms,
         Pounds,
         Ounces,
         Tablespoon,

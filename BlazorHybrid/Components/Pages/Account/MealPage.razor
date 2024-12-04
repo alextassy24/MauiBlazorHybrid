@@ -1,39 +1,182 @@
 @page "/meal/{Id:int}"
+@page "/meal/{Id:int}/edit"
 @inject MealsViewModel MealsViewModel
+@inject NavigationManager NavigationManager
 
-<div class="p-5">
-    <button class="flex items-center gap-2 px-4 py-2 mb-8 text-white bg-gray-500 rounded shadow hover:bg-gray-600"
-            @onclick="MealsViewModel.NavigateBackToMeals">
-        <i class="fa-solid fa-arrow-left"></i>
-        <span class="hidden md:inline-block">Back</span>
-    </button>
-
-    @if (MealsViewModel.SelectedMeal != null)
-    {
-        <div class="flex items-center justify-between p-6 bg-gray-100 rounded-lg shadow-lg">
-            <div>
-                <h1 class="text-2xl font-bold">@MealsViewModel.SelectedMeal.Name</h1>
-                <p class="mt-4 text-gray-600">@MealsViewModel.SelectedMeal.Description</p>
+<div class="min-h-screen pb-24 bg-gray-50">
+    <HeaderBannerComponent 
+        Title="@(IsEditMode ? "Edit Meal" : "Meal Details")"
+        BackgroundColor="bg-green-100"
+        HeightClass="h-40">
+        <AdditionalContent>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center space-x-4">
+                    @if (MealsViewModel.SelectedMeal != null)
+                    {
+                        <span class="flex items-center">
+                            <i class="mr-2 fas fa-utensils"></i>
+                            @MealsViewModel.SelectedMeal.Category
+                        </span>
+                        <span class="flex items-center">
+                            <i class="mr-2 fas fa-clock"></i>
+                            @MealsViewModel.SelectedMeal.DateAdded.ToString("HH:mm")
+                        </span>
+                    }
+                </div>
+                @if (!IsEditMode && MealsViewModel.SelectedMeal != null)
+                {
+                    <button 
+                        @onclick="() => MealsViewModel.EditMeal(MealsViewModel.SelectedMeal.Id)"
+                        class="flex items-center px-4 py-2 space-x-2 text-sm font-medium transition-colors duration-200 rounded-full backdrop-blur-md bg-white/20 hover:bg-white/30">
+                        <i class="fas fa-edit"></i>
+                        <span>Edit</span>
+                    </button>
+                }
             </div>
-            <button class="flex items-center gap-2 px-4 py-2 mt-8 text-white bg-red-500 rounded shadow hover:bg-red-600"
-                @onclick="() => MealsViewModel.RemoveMeal(MealsViewModel.SelectedMeal.Id)">
-                <i class="fa-solid fa-trash"></i>
-                <span class="hidden md:inline-block">Delete</span>
-            </button>
-        </div>
-    }
-    else
-    {
-        <p class="p-3 font-bold text-center text-red-600 bg-red-300 rounded-lg shadow">Meal not found.</p>
-    }
+        </AdditionalContent>
+    </HeaderBannerComponent>
+
+    <div class="px-4 pt-48 space-y-6">
+        @if (MealsViewModel.SelectedMeal != null)
+        {
+            @if (IsEditMode)
+            {
+                <EditForm Model="@MealsViewModel.SelectedMeal" OnValidSubmit="HandleSubmit">
+                    <DataAnnotationsValidator />
+
+                    <div class="space-y-6">
+                        <!-- Basic Information -->
+                        <div class="p-6 bg-white rounded-2xl">
+                            <h2 class="mb-4 text-lg font-semibold">Basic Information</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Name</label>
+                                    <InputText @bind-Value="MealsViewModel.SelectedMeal.Name" 
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Description</label>
+                                    <InputTextArea @bind-Value="MealsViewModel.SelectedMeal.Description" 
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nutritional Information -->
+                        <div class="p-6 bg-white rounded-2xl">
+                            <h2 class="mb-4 text-lg font-semibold">Nutritional Information</h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Calories</label>
+                                    <InputNumber @bind-Value="MealsViewModel.SelectedMeal.TotalCalories" 
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Protein (g)</label>
+                                    <InputNumber @bind-Value="MealsViewModel.SelectedMeal.TotalProteins" 
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Carbs (g)</label>
+                                    <InputNumber @bind-Value="MealsViewModel.SelectedMeal.TotalCarbohydrates" 
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Fats (g)</label>
+                                    <InputNumber @bind-Value="MealsViewModel.SelectedMeal.TotalFats" 
+                                              class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-3">
+                            <button type="button"
+                                    @onclick="MealsViewModel.NavigateBackToMeals"
+                                    class="px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-3 text-white bg-green-600 rounded-xl hover:bg-green-700">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+            }
+            else
+            {
+                <!-- View Mode -->
+                <div class="space-y-6">
+                    <!-- Basic Information -->
+                    <div class="p-6 bg-white rounded-2xl">
+                        <h2 class="mb-4 text-lg font-semibold">@MealsViewModel.SelectedMeal.Name</h2>
+                        <p class="text-gray-600">@MealsViewModel.SelectedMeal.Description</p>
+                    </div>
+
+                    <!-- Nutritional Information -->
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="p-4 text-center bg-white rounded-2xl">
+                            <p class="text-2xl font-bold text-green-600">@MealsViewModel.SelectedMeal.TotalCalories</p>
+                            <p class="text-sm text-gray-600">Calories</p>
+                        </div>
+                        <div class="p-4 text-center bg-white rounded-2xl">
+                            <p class="text-2xl font-bold text-red-600">@MealsViewModel.SelectedMeal.TotalProteins g</p>
+                            <p class="text-sm text-gray-600">Protein</p>
+                        </div>
+                        <div class="p-4 text-center bg-white rounded-2xl">
+                            <p class="text-2xl font-bold text-blue-600">@MealsViewModel.SelectedMeal.TotalCarbohydrates g</p>
+                            <p class="text-sm text-gray-600">Carbs</p>
+                        </div>
+                        <div class="p-4 text-center bg-white rounded-2xl">
+                            <p class="text-2xl font-bold text-yellow-600">@MealsViewModel.SelectedMeal.TotalFats g</p>
+                            <p class="text-sm text-gray-600">Fats</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-3">
+                        <button 
+                            @onclick="() => MealsViewModel.RemoveMeal(MealsViewModel.SelectedMeal.Id)"
+                            class="px-6 py-3 text-white bg-red-600 rounded-xl hover:bg-red-700">
+                            Delete Meal
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="flex items-center justify-center w-16 h-16 mb-4 bg-red-100 rounded-full">
+                    <i class="text-2xl text-red-600 fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Meal not found</h3>
+                <p class="mt-2 text-sm text-gray-500">The meal you're looking for doesn't exist or has been deleted.</p>
+                <button 
+                    @onclick="MealsViewModel.NavigateBackToMeals"
+                    class="px-6 py-3 mt-6 text-white bg-green-600 rounded-xl hover:bg-green-700">
+                    Back to Meals
+                </button>
+            </div>
+        }
+    </div>
 </div>
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
+    private bool IsEditMode => NavigationManager.Uri.EndsWith("/edit");
+
     protected override void OnInitialized()
     {
         MealsViewModel.LoadMeal(Id);
+    }
+
+    private void HandleSubmit()
+    {
+        // Save changes
+        MealsViewModel.NavigateBackToMeals();
     }
 }

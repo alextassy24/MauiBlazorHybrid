@@ -22,7 +22,9 @@ else
                         </span>
                         <span class="flex items-center">
                             <i class="mr-2 fas fa-calendar-alt"></i>
-                            Today
+                            @(DateTime.Today.Date == SelectedDate.Date ? "Today"
+                                : DateTime.Today.Date > SelectedDate.Date ? $"{(DateTime.Today.Date - SelectedDate.Date).Days} days ago"
+                                : $"In {(SelectedDate.Date - DateTime.Today.Date).Days} days")
                         </span>
                     </div>
                     <button 
@@ -36,40 +38,39 @@ else
         </HeaderBannerComponent>
 
         <!-- Main Content -->
-        <div class="px-4 pt-56 pb-10 space-y-6">
+        <div class="px-4 pt-56 pb-6 space-y-6">
             <!-- Date Navigation -->
             <div class="flex items-center justify-between p-4 bg-white shadow-sm rounded-2xl">
-                <button class="p-2 text-gray-600 hover:text-gray-800">
+                <button class="p-2 text-gray-600 transition-transform duration-300 ease-in-out transform hover:text-gray-800 hover:scale-110" @onclick="DecrementDate">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <div class="text-center">
-                    <p class="text-sm text-gray-500">@DateTime.Now.ToString("dddd")</p>
-                    <p class="text-lg font-semibold">@DateTime.Now.ToString("MMMM d, yyyy")</p>
+                <div class="text-center fade-in" @key="SelectedDate">
+                    <p class="text-sm text-gray-500">@SelectedDate.ToString("dddd")</p>
+                    <p class="text-lg font-semibold">@SelectedDate.ToString("MMMM d, yyyy")</p>
                 </div>
-                <button class="p-2 text-gray-600 hover:text-gray-800">
+                <button class="p-2 text-gray-600 transition-transform duration-300 ease-in-out transform hover:text-gray-800 hover:scale-110" @onclick="IncrementDate">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
 
             <div class="space-y-3">
-                <h2 class="text-lg font-bold text-gray-800">Remaining</h2>
+                <h2 class="text-lg font-bold text-gray-800">Nutrients</h2>
             </div>
-            <!-- Quick Stats -->
             <div class="grid grid-cols-4 gap-3">
                 <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
-                    <p class="text-xl font-bold text-green-600">1,850</p>
+                    <p class="mb-2 text-xl font-bold text-green-600">@Calories</p>
                     <p class="text-xs text-gray-600">Calories</p>
                 </div>
                 <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
-                    <p class="text-xl font-bold text-red-600">145g</p>
+                    <p class="mb-2 text-xl font-bold text-red-600">@Proteins g</p>
                     <p class="text-xs text-gray-600">Protein</p>
                 </div>
                 <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
-                    <p class="text-xl font-bold text-blue-600">300g</p>
+                    <p class="mb-2 text-xl font-bold text-blue-600">@Carbs g</p>
                     <p class="text-xs text-gray-600">Carbs</p>
                 </div>
                 <div class="p-3 text-center bg-white shadow-sm rounded-2xl">
-                    <p class="text-xl font-bold text-yellow-600">70g</p>
+                    <p class="mb-2 text-xl font-bold text-yellow-600">@Fats g</p>
                     <p class="text-xs text-gray-600">Fats</p>
                 </div>
             </div>
@@ -82,18 +83,18 @@ else
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-bold text-gray-800">@category</h2>
                             <button 
-                                @onclick="MealsViewModel.AddMeal"
+                                @onclick="OpenMealItemsModal"
                                 class="flex items-center px-4 py-2 space-x-2 text-sm font-medium text-white transition-colors duration-200 bg-green-600 rounded-full hover:bg-green-700 active:bg-green-800">
                                 <i class="fas fa-plus"></i>
-                                <span>Add @category</span>
+                                <span>Add</span>
                             </button>
                         </div>
 
                         @{
-                            var categoryMeals = MealsViewModel.Meals?.Where(m => m.Category == category);
+                            var categoryMeals = MealsViewModel.GetMealsByCategory(category);
                         }
 
-                        @if (categoryMeals?.Any() == true)
+                        @if (categoryMeals.Any())
                         {
                             @foreach (var meal in categoryMeals)
                             {
@@ -105,7 +106,16 @@ else
                                             </div>
                                             <div>
                                                 <h3 class="font-semibold text-gray-800">@meal.Name</h3>
-                                                <p class="text-sm text-gray-500">@meal.Description</p>
+                                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                                    <span class="flex items-center">
+                                                        <i class="mr-1 fas fa-fire"></i>
+                                                        @meal.TotalCalories kcal
+                                                    </span>
+                                                    <span class="flex items-center">
+                                                        <i class="mr-1 fas fa-clock"></i>
+                                                        @meal.DateAdded.ToString("HH:mm")
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="flex items-center space-x-2">
@@ -133,7 +143,7 @@ else
 
     @if (showMealSettings)
     {
-        <ModalComponent Title="Customize Meal Plan" IsOpen="@showMealSettings" OnClose="CloseModal">
+        <ModalComponent Title="Customize Meal Plan" IsOpen="@showMealSettings" OnClose="ClosePlanModal">
             <ChildContent>
                 <div class="space-y-4">
                     <h3 class="mb-2 text-sm font-medium text-gray-700">Preset Plans</h3>
@@ -182,7 +192,7 @@ else
 
             <FooterContent>
                 <button 
-                    @onclick="CloseModal"
+                    @onclick="ClosePlanModal"
                     class="px-4 py-2 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200">
                     Cancel
                 </button>
@@ -194,15 +204,38 @@ else
             </FooterContent>
         </ModalComponent>
     }
+
+    @if(showEditMeal)
+    {
+        <MealItemModal IsOpen="@showEditMeal" EditingItem="@CurrentMealItem" OnSave="SaveMealItem" OnClose="CloseMealItemModal" EditMode="@editMealMode"/>
+    }
 }
 
 @code {
     private bool showMealSettings = false;
+    private bool showEditMeal = false;
+    private bool editMealMode = false;
     private string newCategory = "";
     private List<string> BasicPlan = new() { "Breakfast", "Lunch", "Dinner" };
     private List<string> ExtendedPlan = new() { "Breakfast", "Morning Snack", "Lunch", "Afternoon Snack", "Dinner" };
     private List<string> CurrentMealPlan = new() { "Breakfast", "Lunch", "Dinner" };
     private List<string> TempMealPlan = new();
+    private DateTime SelectedDate = DateTime.Today;
+    private decimal Calories {get;set;} = 0;
+    private decimal Proteins {get;set;} = 0;
+    private decimal Carbs {get;set;} = 0;
+    private decimal Fats {get;set;} = 0;
+    private MealItem? CurrentMealItem {get;set;} = null;
+
+    protected override void OnInitialized() 
+    {
+        var todayMeals = MealsViewModel.Meals.Where(m => m.DateAdded.Date == DateTime.Today);
+
+        Calories = todayMeals.Sum(m => m.TotalCalories);
+        Proteins = todayMeals.Sum(m => m.TotalProteins);
+        Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
+        Fats = todayMeals.Sum(m => m.TotalFats);
+    }
 
     private void OpenModal()
     {
@@ -211,17 +244,15 @@ else
         TempMealPlan = new List<string>(CurrentMealPlan);
     }
 
-    private void CloseModal()
+    private void ClosePlanModal()
     {
         UserState.CloseModal();
         showMealSettings = false;
     }
-
     private void SetMealPlan(List<string> plan)
     {
         TempMealPlan = new List<string>(plan);
     }
-
     private void AddCategory()
     {
         if (!string.IsNullOrWhiteSpace(newCategory) && !TempMealPlan.Contains(newCategory))
@@ -230,15 +261,62 @@ else
             newCategory = "";
         }
     }
-
     private void RemoveCategory(string category)
     {
         TempMealPlan.Remove(category);
     }
-
     private void SaveMealSettings()
     {
         CurrentMealPlan = new List<string>(TempMealPlan); 
-        CloseModal();
+        ClosePlanModal();
+    }
+    private void SaveMealItem()
+    {
+        if (editMealMode && CurrentMealItem != null)
+        {
+            MealsViewModel.UpdateMealItem(CurrentMealItem);
+        }
+        else if (CurrentMealItem != null)
+        {
+            MealsViewModel.AddMealItem(CurrentMealItem);
+        }
+        MealsViewModel.LoadMeals();
+        UserState.CloseModal();
+        showEditMeal = false;
+        StateHasChanged();
+    }
+    private void OpenMealItemsModal()
+    {
+        UserState.OpenModal();
+        showEditMeal = true;
+        CurrentMealItem = new MealItem();
+    }
+    private void CloseMealItemModal()
+    {
+        UserState.CloseModal();
+        showEditMeal = false;
+    }
+
+    private void DecrementDate()
+    {
+        SelectedDate = SelectedDate.AddDays(-1);
+        UpdateMealSummary();
+    }
+
+    private void IncrementDate()
+    {
+        SelectedDate = SelectedDate.AddDays(1);
+        UpdateMealSummary();
+    }
+
+    private void UpdateMealSummary()
+    {
+        var todayMeals = MealsViewModel.Meals.Where(m => m.DateAdded.Date == SelectedDate.Date);
+        
+        Calories = todayMeals.Sum(m => m.TotalCalories);
+        Proteins = todayMeals.Sum(m => m.TotalProteins);
+        Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
+        Fats = todayMeals.Sum(m => m.TotalFats);
+        StateHasChanged();
     }
 }

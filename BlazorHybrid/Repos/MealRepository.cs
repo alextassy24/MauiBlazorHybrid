@@ -1,5 +1,6 @@
 using BlazorHybrid.Interfaces.Repos;
 using BlazorHybrid.Shared.Models;
+using Java.Sql;
 
 namespace BlazorHybrid.Repos
 {
@@ -21,9 +22,9 @@ namespace BlazorHybrid.Repos
 
         public void Delete(object id) => _meals.RemoveAll(m => m.Id == (int)id);
 
-        public List<Meal> GetMealsByUserId(Guid userId)
+        public List<Meal> GetMealsByUserId(string userId)
         {
-            return _meals.Where(m => m.UserId == userId).ToList();
+            return _meals.Where(m => m.UserId.ToString() == userId).ToList();
         }
     }
 }

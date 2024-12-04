@@ -1,0 +1,109 @@
+<ModalComponent Title="@(!EditMode? "Add Meal Item" : "Edit Meal Item")" IsOpen="@IsOpen" OnClose="OnClose">
+    <ChildContent>
+        <EditForm Model="@currentItem" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="space-y-4">
+                <!-- Basic Information -->
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Name</label>
+                    <InputText @bind-Value="currentItem.Name" 
+                             class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Quantity</label>
+                        <InputNumber @bind-Value="currentItem.Quantity" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Unit</label>
+                        <InputSelect @bind-Value="currentItem.UnitMeasure" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            @foreach (var unit in Enum.GetValues(typeof(UnitMeasure)))
+                            {
+                                <option value="@unit">@unit</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+
+                <!-- Nutritional Information -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Proteins (g)</label>
+                        <InputNumber @bind-Value="currentItem.Proteins" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Carbs (g)</label>
+                        <InputNumber @bind-Value="currentItem.Carbohydrates" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Fats (g)</label>
+                        <InputNumber @bind-Value="currentItem.Fats" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </ChildContent>
+
+    <FooterContent>
+        <button 
+            @onclick="OnClose"
+            class="px-4 py-2 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200">
+            Cancel
+        </button>
+        <button 
+            @onclick="HandleSubmit"
+            class="px-4 py-2 text-white bg-green-600 rounded-xl hover:bg-green-700">
+            @(!EditMode ? "Add Item" : "Save Changes")
+        </button>
+    </FooterContent>
+</ModalComponent>
+
+@code {
+    [Parameter] 
+    public bool IsOpen { get; set; }
+    [Parameter] 
+    public bool EditMode { get; set; }
+    [Parameter] 
+    public MealItem? EditingItem { get; set; }
+    [Parameter] 
+    public EventCallback<MealItem> OnSave { get; set; }
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+    private MealItem currentItem = new();
+
+    protected override void OnParametersSet()
+    {
+        if (EditingItem != null)
+        {
+            currentItem = new MealItem
+            {
+                Id = EditingItem.Id,
+                Name = EditingItem.Name,
+                Quantity = EditingItem.Quantity,
+                Proteins = EditingItem.Proteins,
+                Carbohydrates = EditingItem.Carbohydrates,
+                Fats = EditingItem.Fats,
+                Calories = EditingItem.Calories,
+                UnitMeasure = EditingItem.UnitMeasure
+            };
+        }
+        else
+        {
+            currentItem = new MealItem();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        await OnSave.InvokeAsync(currentItem);
+        await OnClose.InvokeAsync();
+    }
+}

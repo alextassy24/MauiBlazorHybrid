@@ -9,19 +9,12 @@ namespace BlazorHybrid.Shared.Models
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public decimal TotalCalories { get; set; }
-        public decimal TotalProteins { get; set; }
-        public decimal TotalCarbohydrates { get; set; }
-        public decimal TotalFats { get; set; }
-        public DateTime DateAdded { get; set; }
-        public List<MealItem> MealItems { get; set; }
-
-        public Meal()
-        {
-            MealItems = [];
-            DateAdded = DateTime.UtcNow;
-            Category = "Uncategorized"; // Default category
-        }
+        public string Category { get; set; } = "Uncategorized";
+        public decimal TotalCalories { get; set; } = 0;
+        public decimal TotalProteins { get; set; } = 0;
+        public decimal TotalCarbohydrates { get; set; } = 0;
+        public decimal TotalFats { get; set; } = 0;
+        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+        public List<MealItem> MealItems { get; set; } = [];
     }
 }
