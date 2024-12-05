@@ -10,7 +10,8 @@
         <!-- Background (Color or Image) -->
         @if (!string.IsNullOrEmpty(ImageUrl))
         {
-            <img src="@ImageUrl" 
+            <img src="@ImageUrl"
+                 loading="lazy" 
                  alt="Banner Background" 
                  class="absolute inset-0 object-cover w-full h-full" />
         }
@@ -40,17 +41,17 @@
     public string Title { get; set; } = string.Empty;
 
     [Parameter]
-    public string? ImageUrl { get; set; } // Optional image URL
+    public string? ImageUrl { get; set; }
 
     [Parameter]
-    public string BackgroundColor { get; set; } = "bg-purple-400"; // Default background color
+    public string BackgroundColor { get; set; } = "bg-purple-400"; 
 
     [Parameter]
-    public RenderFragment? AdditionalContent { get; set; } // Optional additional content (e.g., metadata)
+    public RenderFragment? AdditionalContent { get; set; }
 
     [Parameter]
-    public string HeightClass { get; set; } = "h-32"; // Adjustable height
+    public string HeightClass { get; set; } = "h-32";
 
     [Parameter]
-    public string TopClass { get; set; } = "top-16"; // Adjustable position
+    public string TopClass { get; set; } = "top-16";
 }

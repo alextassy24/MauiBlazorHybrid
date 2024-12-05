@@ -11,14 +11,13 @@ else
     <div class="min-h-screen pb-24 bg-gray-50">
         <HeaderBannerComponent 
             Title="@HeaderTitle" 
-            BackgroundColor="@GetCategoryBackground()"
+            ImageUrl="@ImageUtils.GetRandomImage(SelectedCategory.ToLower())"
             HeightClass="h-40">
             <AdditionalContent>
                 <div class="flex items-center justify-between w-full">
                     <span class="flex items-center px-3 py-2 bg-white rounded-full">
                         <i class="@GetCategoryIcon() mr-2"></i>
                         <span class="text-@GetCategoryButtonColor()-600">@FilteredWorkouts.Count() @(FilteredWorkouts.Count() == 1? "workout" : "workouts")</span>
-                        
                     </span>
                     <button 
                         @onclick="CreateNewWorkout"
@@ -36,26 +35,31 @@ else
             <div class="flex gap-2 pb-2 overflow-x-auto scrollbar-hide">
                 <button 
                     @onclick="() => SetFilter(null)"
+                    disabled="@(currentFilter == null)"
                     class="@GetFilterButtonClass(null)">
                     All
                 </button>
                 <button 
                     @onclick="() => SetFilter(Level.Beginner)"
+                    disabled="@(currentFilter == Level.Beginner)"
                     class="@GetFilterButtonClass(Level.Beginner)">
                     Beginner
                 </button>
                 <button 
                     @onclick="() => SetFilter(Level.Intermediate)"
+                    disabled="@(currentFilter == Level.Intermediate)"
                     class="@GetFilterButtonClass(Level.Intermediate)">
                     Intermediate
                 </button>
                 <button 
                     @onclick="() => SetFilter(Level.Advanced)"
+                    disabled="@(currentFilter == Level.Advanced)"
                     class="@GetFilterButtonClass(Level.Advanced)">
                     Advanced
                 </button>
                 <button 
                     @onclick="() => SetFilter(Level.Expert)"
+                    disabled="@(currentFilter == Level.Expert)"
                     class="@GetFilterButtonClass(Level.Expert)">
                     Expert
                 </button>

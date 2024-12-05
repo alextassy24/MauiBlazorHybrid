@@ -6,30 +6,25 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorHybrid.ViewModels
 {
-    public class MealsViewModel
+    public class MealsViewModel(IMealRepository mealRepository, NavigationManager navigationManager)
     {
-        private readonly IMealRepository _mealRepository;
-        private readonly NavigationManager _navigationManager;
-        private readonly UserState _userState;
-        private readonly string UserId;
+        private readonly IMealRepository _mealRepository = mealRepository;
+        private readonly NavigationManager _navigationManager = navigationManager;
         public ObservableCollection<Meal> Meals { get; private set; } = [];
         public Meal? SelectedMeal { get; private set; }
-
-        public MealsViewModel(IMealRepository mealRepository, NavigationManager navigationManager, UserState UserState)
+        public async void LoadMeals(string id)
         {
-            _mealRepository = mealRepository;
-            _navigationManager = navigationManager;
-            _userState = UserState;
-            UserId = _userState.LoggedInUser.Id;
-            LoadMeals();
+            try
+            {
+                var meals = _mealRepository.GetMealsByUserId(id);
+                Meals = [.. meals];
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to load meals.", ex);
+            }
         }
 
-        public void LoadMeals()
-        {
-            var meals = _mealRepository.GetMealsByUserId(UserId);
-            Meals = [.. meals];
-        }
-        
         public void AddMeal(string category)
         {
             var newMeal = new Meal
@@ -65,7 +60,9 @@ namespace BlazorHybrid.ViewModels
             if (SelectedMeal == null)
                 return;
 
-            var existingItem = SelectedMeal.MealItems.Any() ? SelectedMeal.MealItems.FirstOrDefault(i => i.Id == item.Id) : null;
+            var existingItem = SelectedMeal.MealItems.Any()
+                ? SelectedMeal.MealItems.FirstOrDefault(i => i.Id == item.Id)
+                : null;
             if (existingItem != null)
             {
                 var index = SelectedMeal.MealItems.IndexOf(existingItem);

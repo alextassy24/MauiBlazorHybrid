@@ -1,6 +1,5 @@
 using BlazorHybrid.Interfaces.Repos;
 using BlazorHybrid.Shared.Models;
-using Java.Sql;
 
 namespace BlazorHybrid.Repos
 {

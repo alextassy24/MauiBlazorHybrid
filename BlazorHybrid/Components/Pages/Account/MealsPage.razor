@@ -1,6 +1,7 @@
 @page "/meals"
-@inject MealsViewModel MealsViewModel
+
 @inject UserState UserState
+@inject MealsViewModel MealsViewModel
 
 @if (!UserState.IsLoggedIn)
 {
@@ -11,7 +12,7 @@ else
     <div class="min-h-screen pb-24 bg-gray-50">
         <HeaderBannerComponent 
             Title="Your Meals" 
-            ImageUrl="https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80"
+            ImageUrl="@ImageUtils.GetRandomFoodImage()"
             HeightClass="h-48">
             <AdditionalContent>
                 <div class="flex items-center justify-between w-full">
@@ -209,114 +210,122 @@ else
     {
         <MealItemModal IsOpen="@showEditMeal" EditingItem="@CurrentMealItem" OnSave="SaveMealItem" OnClose="CloseMealItemModal" EditMode="@editMealMode"/>
     }
-}
 
-@code {
-    private bool showMealSettings = false;
-    private bool showEditMeal = false;
-    private bool editMealMode = false;
-    private string newCategory = "";
-    private List<string> BasicPlan = new() { "Breakfast", "Lunch", "Dinner" };
-    private List<string> ExtendedPlan = new() { "Breakfast", "Morning Snack", "Lunch", "Afternoon Snack", "Dinner" };
-    private List<string> CurrentMealPlan = new() { "Breakfast", "Lunch", "Dinner" };
-    private List<string> TempMealPlan = new();
-    private DateTime SelectedDate = DateTime.Today;
-    private decimal Calories {get;set;} = 0;
-    private decimal Proteins {get;set;} = 0;
-    private decimal Carbs {get;set;} = 0;
-    private decimal Fats {get;set;} = 0;
-    private MealItem? CurrentMealItem {get;set;} = null;
+    @code {
+        private bool showMealSettings = false;
+        private bool showEditMeal = false;
+        private bool editMealMode = false;
+        private string newCategory = "";
+        private List<string> BasicPlan = new() { "Breakfast", "Lunch", "Dinner" };
+        private List<string> ExtendedPlan = new() { "Breakfast", "Morning Snack", "Lunch", "Afternoon Snack", "Dinner" };
+        private List<string> CurrentMealPlan = new() { "Breakfast", "Lunch", "Dinner" };
+        private List<string> TempMealPlan = new();
+        private DateTime SelectedDate = DateTime.Today;
+        private decimal Calories {get;set;} = 0;
+        private decimal Proteins {get;set;} = 0;
+        private decimal Carbs {get;set;} = 0;
+        private decimal Fats {get;set;} = 0;
+        private MealItem? CurrentMealItem {get;set;} = null;
 
-    protected override void OnInitialized() 
-    {
-        var todayMeals = MealsViewModel.Meals.Where(m => m.DateAdded.Date == DateTime.Today);
-
-        Calories = todayMeals.Sum(m => m.TotalCalories);
-        Proteins = todayMeals.Sum(m => m.TotalProteins);
-        Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
-        Fats = todayMeals.Sum(m => m.TotalFats);
-    }
-
-    private void OpenModal()
-    {
-        UserState.OpenModal();
-        showMealSettings = true;
-        TempMealPlan = new List<string>(CurrentMealPlan);
-    }
-
-    private void ClosePlanModal()
-    {
-        UserState.CloseModal();
-        showMealSettings = false;
-    }
-    private void SetMealPlan(List<string> plan)
-    {
-        TempMealPlan = new List<string>(plan);
-    }
-    private void AddCategory()
-    {
-        if (!string.IsNullOrWhiteSpace(newCategory) && !TempMealPlan.Contains(newCategory))
+        protected override void OnInitialized()
         {
-            TempMealPlan.Add(newCategory);
-            newCategory = "";
+            if (UserState == null || !UserState.IsLoggedIn || UserState.LoggedInUser == null)
+            {
+                return;
+            }
+
+                MealsViewModel.LoadMeals(UserState.LoggedInUser.Id);
+
+                var todayMeals = MealsViewModel.Meals?.Where(m => m.DateAdded.Date == DateTime.Today) ?? Enumerable.Empty<Meal>();
+
+                Calories = todayMeals.Sum(m => m.TotalCalories);
+                Proteins = todayMeals.Sum(m => m.TotalProteins);
+                Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
+                Fats = todayMeals.Sum(m => m.TotalFats);
         }
-    }
-    private void RemoveCategory(string category)
-    {
-        TempMealPlan.Remove(category);
-    }
-    private void SaveMealSettings()
-    {
-        CurrentMealPlan = new List<string>(TempMealPlan); 
-        ClosePlanModal();
-    }
-    private void SaveMealItem()
-    {
-        if (editMealMode && CurrentMealItem != null)
+
+
+        private void OpenModal()
         {
-            MealsViewModel.UpdateMealItem(CurrentMealItem);
+            UserState.OpenModal();
+            showMealSettings = true;
+            TempMealPlan = new List<string>(CurrentMealPlan);
         }
-        else if (CurrentMealItem != null)
+
+        private void ClosePlanModal()
         {
-            MealsViewModel.AddMealItem(CurrentMealItem);
+            UserState.CloseModal();
+            showMealSettings = false;
         }
-        MealsViewModel.LoadMeals();
-        UserState.CloseModal();
-        showEditMeal = false;
-        StateHasChanged();
-    }
-    private void OpenMealItemsModal()
-    {
-        UserState.OpenModal();
-        showEditMeal = true;
-        CurrentMealItem = new MealItem();
-    }
-    private void CloseMealItemModal()
-    {
-        UserState.CloseModal();
-        showEditMeal = false;
-    }
+        private void SetMealPlan(List<string> plan)
+        {
+            TempMealPlan = new List<string>(plan);
+        }
+        private void AddCategory()
+        {
+            if (!string.IsNullOrWhiteSpace(newCategory) && !TempMealPlan.Contains(newCategory))
+            {
+                TempMealPlan.Add(newCategory);
+                newCategory = "";
+            }
+        }
+        private void RemoveCategory(string category)
+        {
+            TempMealPlan.Remove(category);
+        }
+        private void SaveMealSettings()
+        {
+            CurrentMealPlan = new List<string>(TempMealPlan); 
+            ClosePlanModal();
+        }
+        private void SaveMealItem()
+        {
+            if (editMealMode && CurrentMealItem != null)
+            {
+                MealsViewModel.UpdateMealItem(CurrentMealItem);
+            }
+            else if (CurrentMealItem != null)
+            {
+                MealsViewModel.AddMealItem(CurrentMealItem);
+            }
+            MealsViewModel.LoadMeals(UserState.LoggedInUser.Id);
+            UserState.CloseModal();
+            showEditMeal = false;
+            StateHasChanged();
+        }
+        private void OpenMealItemsModal()
+        {
+            UserState.OpenModal();
+            showEditMeal = true;
+            CurrentMealItem = new MealItem();
+        }
+        private void CloseMealItemModal()
+        {
+            UserState.CloseModal();
+            showEditMeal = false;
+        }
 
-    private void DecrementDate()
-    {
-        SelectedDate = SelectedDate.AddDays(-1);
-        UpdateMealSummary();
-    }
+        private void DecrementDate()
+        {
+            SelectedDate = SelectedDate.AddDays(-1);
+            UpdateMealSummary();
+        }
 
-    private void IncrementDate()
-    {
-        SelectedDate = SelectedDate.AddDays(1);
-        UpdateMealSummary();
-    }
+        private void IncrementDate()
+        {
+            SelectedDate = SelectedDate.AddDays(1);
+            UpdateMealSummary();
+        }
 
-    private void UpdateMealSummary()
-    {
-        var todayMeals = MealsViewModel.Meals.Where(m => m.DateAdded.Date == SelectedDate.Date);
-        
-        Calories = todayMeals.Sum(m => m.TotalCalories);
-        Proteins = todayMeals.Sum(m => m.TotalProteins);
-        Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
-        Fats = todayMeals.Sum(m => m.TotalFats);
-        StateHasChanged();
+        private void UpdateMealSummary()
+        {
+            var todayMeals = MealsViewModel.Meals.Where(m => m.DateAdded.Date == SelectedDate.Date);
+            
+            Calories = todayMeals.Sum(m => m.TotalCalories);
+            Proteins = todayMeals.Sum(m => m.TotalProteins);
+            Carbs = todayMeals.Sum(m => m.TotalCarbohydrates);
+            Fats = todayMeals.Sum(m => m.TotalFats);
+            StateHasChanged();
+        }
     }
 }

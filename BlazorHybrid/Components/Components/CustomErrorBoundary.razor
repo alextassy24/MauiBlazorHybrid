@@ -1,0 +1,52 @@
+@inherits ErrorBoundary
+@inject NavigationManager NavigationManager
+@inject UserState UserState
+
+@if (CurrentException != null)
+{
+    <ExceptionComponent CurrentException="CurrentException" />
+}
+else
+{
+    <div class="flex flex-col min-h-screen bg-gray-100">
+        <header class="fixed top-0 z-50 w-full">
+            <TopNavMenu />
+        </header>
+
+        <main class="flex-grow mt-14">
+            @ChildContent
+        </main>
+
+        @if (UserState.IsLoggedIn && !ShouldHideFooter())
+        {
+            <footer class="fixed bottom-0 z-50 w-full">
+                <BottomNavMenu />
+            </footer>
+        }
+    </div>
+}
+
+@code {
+
+    private bool ShouldHideFooter()
+    {
+        if (UserState.IsModalOpen)
+        {
+            return true;
+        }
+
+        var currentUri = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").TrimEnd('/');
+        var pagesToHideFooter = new[] { "login", "register", "forgot-password", "verify" };
+        return pagesToHideFooter.Any(page => currentUri.StartsWith(page, StringComparison.OrdinalIgnoreCase));
+    }
+
+    protected override void OnInitialized()
+    {
+        UserState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        UserState.OnChange -= StateHasChanged;
+    }
+}
